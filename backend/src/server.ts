@@ -1,9 +1,20 @@
+// Carrega variáveis de ambiente PRIMEIRO
+import dotenv from 'dotenv';
+dotenv.config();
+
+// Log das variáveis de ambiente para debug
+console.log('[Server] Variáveis de ambiente carregadas:');
+console.log('[Server] ERP_API_KEY:', process.env.ERP_API_KEY ? 'Configurado' : 'NÃO CONFIGURADO');
+console.log('[Server] ERP_SECRET:', process.env.ERP_SECRET ? 'Configurado' : 'NÃO CONFIGURADO');
+console.log('[Server] ERP_BASE_URL:', process.env.ERP_BASE_URL);
+
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
-
-// Carrega variáveis de ambiente
-dotenv.config();
+import { produtosRoutes } from './routes/produtos';
+import { erpRoutes } from './routes/erp';
+import vendasRoutes from './routes/vendas';
+import clientesRoutes from './routes/clientes';
+import dashboardRoutes from './routes/dashboard';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -16,12 +27,21 @@ app.use((req, res, next) => {
 
 // Configuração do CORS
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-  credentials: true
+  origin: process.env.FRONTEND_URL || 'http://localhost:8080',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 // Middleware para parsing JSON
 app.use(express.json());
+
+// Rotas da API
+app.use('/api/produtos', produtosRoutes);
+app.use('/api/erp', erpRoutes);
+app.use('/api/vendas', vendasRoutes);
+app.use('/api/clientes', clientesRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // Rota de teste para verificar se o servidor está funcionando
 app.get('/api/health', (req, res) => {
