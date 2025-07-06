@@ -1,0 +1,404 @@
+# Instruções para Lovable.dev - Painel KPI V2 Frontend
+
+## 📋 Visão Geral do Projeto
+
+Este é um painel de KPIs (Key Performance Indicators) desenvolvido em React com TypeScript, focado em análise de dados empresariais, segmentação de clientes (RFM) e métricas de performance.
+
+## 🛠️ Stack Tecnológico
+
+### Core Technologies
+- **React 18.2.0** - Framework principal
+- **TypeScript 5.0.2** - Tipagem estática
+- **Vite 7.0.0** - Build tool e dev server
+- **React Router DOM 6.14.2** - Roteamento
+
+### Styling & UI
+- **Tailwind CSS 3.3.3** - Framework CSS utilitário
+- **Tailwind CSS Animate 1.0.6** - Animações
+- **Lucide React 0.263.1** - Ícones
+- **Class Variance Authority 0.7.0** - Variantes de componentes
+- **CLSX 2.0.0** - Utilitário para classes condicionais
+- **Tailwind Merge 1.14.0** - Merge de classes Tailwind
+
+### Data & Charts
+- **Recharts 2.7.2** - Biblioteca de gráficos
+- **Axios 1.4.0** - Cliente HTTP
+- **Date-fns 4.1.0** - Manipulação de datas
+
+### Development Tools
+- **ESLint** - Linting
+- **PostCSS** - Processamento CSS
+- **Autoprefixer** - Prefixos CSS automáticos
+- **Terser** - Minificação
+
+## 🎨 Design System
+
+### Paleta de Cores (CSS Variables)
+```css
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --primary: 221.2 83.2% 53.3%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222.2 84% 4.9%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 222.2 84% 4.9%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 221.2 83.2% 53.3%;
+  --radius: 0.5rem;
+}
+```
+
+### Cores Principais
+- **Azul Primário**: `#3B82F6` (blue-600)
+- **Verde**: `#10B981` (green-600)
+- **Roxo**: `#8B5CF6` (purple-600)
+- **Amarelo**: `#F59E0B` (yellow-600)
+- **Índigo**: `#6366F1` (indigo-600)
+- **Vermelho**: `#EF4444` (red-600)
+
+### Tipografia
+- **Títulos**: `text-2xl font-bold text-gray-900`
+- **Subtítulos**: `text-lg font-semibold text-gray-800`
+- **Texto**: `text-gray-600`
+- **Labels**: `text-sm font-medium text-gray-700`
+
+### Espaçamento
+- **Container**: `p-6` (24px)
+- **Cards**: `p-6` (24px)
+- **Grid Gap**: `gap-6` (24px)
+- **Seções**: `space-y-6` (24px)
+
+## 🏗️ Estrutura de Layout
+
+### Layout Principal
+```tsx
+<div className="flex h-screen bg-gray-100">
+  {/* Sidebar */}
+  <div className="w-64 bg-white shadow-lg">
+    {/* Header da Sidebar */}
+    <div className="p-6 bg-blue-600">
+      <h1 className="text-xl font-bold text-white">📊 Painel KPIs</h1>
+    </div>
+    
+    {/* Navegação */}
+    <nav className="mt-6">
+      {/* Items de navegação */}
+    </nav>
+  </div>
+
+  {/* Conteúdo Principal */}
+  <div className="flex-1 overflow-auto">
+    {/* Header */}
+    <header className="bg-white shadow-sm border-b">
+      <div className="px-6 py-4 flex items-center justify-between">
+        <h1 className="text-2xl font-semibold text-gray-900">Título da Página</h1>
+      </div>
+    </header>
+
+    {/* Main Content */}
+    <main className="p-6">
+      {/* Conteúdo das páginas */}
+    </main>
+  </div>
+</div>
+```
+
+### Sidebar Responsiva
+- **Desktop**: `w-64` (256px) - sempre visível
+- **Mobile**: `w-80` (320px) - overlay com overlay escuro
+- **Transições**: `transition-transform duration-300 ease-in-out`
+
+## 📱 Componentes UI Principais
+
+### Card Component
+```tsx
+export const Card: React.FC<CardProps> = ({ children, className = '', ...props }) => (
+  <div className={`rounded-lg border bg-white text-gray-900 shadow-sm ${className}`} {...props}>
+    {children}
+  </div>
+)
+
+export const CardHeader: React.FC<CardHeaderProps> = ({ children, className = '', ...props }) => (
+  <div className={`flex flex-col space-y-1.5 p-6 ${className}`} {...props}>
+    {children}
+  </div>
+)
+
+export const CardTitle: React.FC<CardTitleProps> = ({ children, className = '', ...props }) => (
+  <h3 className={`text-2xl font-semibold leading-none tracking-tight ${className}`} {...props}>
+    {children}
+  </h3>
+)
+
+export const CardContent: React.FC<CardContentProps> = ({ children, className = '', ...props }) => (
+  <div className={`p-6 pt-0 ${className}`} {...props}>
+    {children}
+  </div>
+)
+```
+
+### Loading Spinner
+```tsx
+<div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+```
+
+### Filtro Temporal
+Componente complexo com:
+- Seletor de período (semana, mês, trimestre, ano)
+- Campos de data personalizada
+- Validação de datas
+- Indicador visual do período ativo
+
+## 📊 Páginas Principais
+
+### 1. Dashboard Geral (`/`)
+- **Layout**: Grid responsivo de cards KPI
+- **Componentes**: 6 cards principais com métricas
+- **Filtros**: Filtro temporal integrado
+- **Responsividade**: `grid-cols-1 md:grid-cols-2 lg:grid-cols-3`
+
+### 2. Dashboard Executivo (`/executivo`)
+- **Layout**: Cards maiores com métricas estratégicas
+- **Gráficos**: Recharts para visualizações
+- **Foco**: KPIs de alto nível
+
+### 3. Análise RFM (`/rfm`)
+- **Layout**: Tabs com diferentes análises
+- **Funcionalidades**: Segmentação de clientes
+- **Gráficos**: Scatter plots e tabelas
+
+### 4. Clientes (`/clientes`)
+- **Layout**: Tabela com paginação
+- **Funcionalidades**: CRUD de clientes
+- **Navegação**: Perfil detalhado do cliente
+
+### 5. Produtos (`/produtos`)
+- **Layout**: Cards de produtos
+- **Funcionalidades**: Análise de produtos
+- **Filtros**: Categorias e performance
+
+## 🎯 Padrões de Design
+
+### Cards KPI
+```tsx
+<Card>
+  <CardContent className="p-6">
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-sm font-medium text-gray-600">Título do KPI</p>
+        <p className="text-2xl font-bold text-gray-900">Valor</p>
+      </div>
+      <Icon className="h-8 w-8 text-blue-600" />
+    </div>
+  </CardContent>
+</Card>
+```
+
+### Grid Responsivo
+```tsx
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  {/* Cards */}
+</div>
+```
+
+### Estados de Loading
+```tsx
+if (loading) {
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-center py-12">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    </div>
+  )
+}
+```
+
+### Estados de Erro
+```tsx
+if (error) {
+  return (
+    <div className="space-y-6">
+      <Card>
+        <CardContent className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <AlertTriangle className="h-16 w-16 mx-auto text-red-400 mb-4" />
+            <h3 className="text-lg font-semibold text-red-900 mb-2">Erro ao Carregar</h3>
+            <p className="text-red-600">{error}</p>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+```
+
+## 🔧 Configurações Importantes
+
+### Vite Config
+- **Alias**: `@` aponta para `./src`
+- **Port**: 3001
+- **Proxy**: `/api` para `http://localhost:3000`
+- **Code Splitting**: Chunks otimizados por funcionalidade
+
+### Tailwind Config
+- **Dark Mode**: `["class"]`
+- **Content**: Todos os arquivos `.tsx` em `src`
+- **Custom Colors**: Sistema de cores com CSS variables
+- **Animations**: Accordion animations
+
+### TypeScript Config
+- **Strict Mode**: Habilitado
+- **Path Mapping**: `@/*` para `src/*`
+- **Target**: ES2020
+
+## 📦 Estrutura de Arquivos
+
+```
+src/
+├── components/
+│   ├── ui/           # Componentes base (Card, LoadingSpinner, etc.)
+│   ├── layout/       # Layout components (Sidebar)
+│   └── debug/        # Componentes de debug
+├── modules/          # Módulos organizados por funcionalidade
+│   ├── dashboard/
+│   ├── clientes/
+│   ├── produtos/
+│   └── rfm/
+├── pages/            # Páginas principais
+├── config/           # Configurações (API, environment)
+├── lib/              # Utilitários
+└── utils/            # Funções utilitárias
+```
+
+## 🚀 Funcionalidades Especiais
+
+### Lazy Loading
+```tsx
+const RFMAnalysis = lazy(() => import('./pages/RFMAnalysis'))
+const DashboardExecutivo = lazy(() => import('./modules/dashboard/DashboardExecutivo'))
+```
+
+### Navegação Dinâmica
+- Sistema de rotas com React Router
+- Parâmetros de URL para estados
+- Navegação entre perfil de cliente e listagem
+
+### Filtros Temporais
+- 13 opções de período pré-definidas
+- Período personalizado com validação
+- Integração com API
+
+### Sistema de Debug
+- Componentes de debug para desenvolvimento
+- Testes de navegação
+- Logs de estado
+
+## 🎨 Elementos Visuais
+
+### Ícones
+- **Lucide React**: Ícones consistentes
+- **Emojis**: Para categorização visual
+- **Tamanhos**: `h-4 w-4`, `h-8 w-8`, `h-16 w-16`
+
+### Gradientes
+- **Header Sidebar**: `bg-gradient-to-r from-blue-600 to-blue-700`
+- **Progress Bar**: `bg-gradient-to-r from-blue-500 to-green-500`
+
+### Sombras
+- **Cards**: `shadow-sm`
+- **Sidebar**: `shadow-lg`
+- **Header**: `shadow-sm`
+
+### Bordas
+- **Radius**: `rounded-lg` (8px)
+- **Borders**: `border border-gray-200`
+
+## 📱 Responsividade
+
+### Breakpoints
+- **Mobile**: `< 768px`
+- **Tablet**: `768px - 1024px`
+- **Desktop**: `> 1024px`
+
+### Grid Responsivo
+- **Mobile**: `grid-cols-1`
+- **Tablet**: `md:grid-cols-2`
+- **Desktop**: `lg:grid-cols-3`
+
+### Sidebar Mobile
+- **Overlay**: `fixed inset-0 bg-black bg-opacity-50`
+- **Slide**: `translate-x-0` / `-translate-x-full`
+
+## 🔄 Estados e Interações
+
+### Hover States
+```css
+hover:bg-gray-50 hover:text-gray-900
+hover:bg-blue-700
+```
+
+### Focus States
+```css
+focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+```
+
+### Active States
+```css
+bg-blue-100 text-blue-900 border-r-2 border-blue-600
+```
+
+### Disabled States
+```css
+disabled:bg-gray-300 disabled:cursor-not-allowed
+```
+
+## 📊 Dados e API
+
+### Estrutura de Dados KPI
+```typescript
+interface KPIData {
+  totalClientes: number
+  totalVendas: number
+  receitaTotal: number
+  ticketMedio: number
+  clientesAtivos: number
+  crescimentoMensal: number
+}
+```
+
+### Endpoints
+- `GET /api/v1/dashboard/kpis` - KPIs principais
+- `GET /api/v1/clientes` - Lista de clientes
+- `GET /api/v1/produtos` - Lista de produtos
+- `GET /api/v1/rfm/analise` - Análise RFM
+
+## 🎯 Objetivos de Design
+
+1. **Clareza**: Informações organizadas e fáceis de ler
+2. **Eficiência**: Navegação rápida entre seções
+3. **Responsividade**: Funciona em todos os dispositivos
+4. **Performance**: Lazy loading e otimizações
+5. **Consistência**: Design system unificado
+6. **Acessibilidade**: Contraste adequado e navegação por teclado
+
+## 🚀 Próximos Passos para Implementação
+
+1. **Setup do Projeto**: Instalar dependências e configurar Vite
+2. **Componentes Base**: Implementar Card, LoadingSpinner, FiltroTemporal
+3. **Layout Principal**: Sidebar e estrutura de navegação
+4. **Páginas**: Implementar cada página seguindo os padrões
+5. **Integração API**: Conectar com backend
+6. **Testes**: Testar responsividade e funcionalidades
+7. **Otimizações**: Performance e bundle size
+
+---
+
+**Nota**: Este documento contém todas as informações necessárias para recriar o layout do frontend no lovable.dev, incluindo tecnologias, estrutura, design system e padrões de implementação. 

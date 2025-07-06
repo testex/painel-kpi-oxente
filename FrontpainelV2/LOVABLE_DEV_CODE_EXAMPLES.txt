@@ -1,0 +1,927 @@
+# Exemplos de Código para Lovable.dev
+
+## 📦 Package.json Completo
+
+```json
+{
+  "name": "painel-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "axios": "^1.4.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.0.0",
+    "date-fns": "^4.1.0",
+    "lucide-react": "^0.263.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.14.2",
+    "recharts": "^2.7.2",
+    "tailwind-merge": "^1.14.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react": "^4.0.3",
+    "autoprefixer": "^10.4.14",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "postcss": "^8.4.27",
+    "tailwindcss": "^3.3.3",
+    "tailwindcss-animate": "^1.0.6",
+    "terser": "^5.43.1",
+    "typescript": "^5.0.2",
+    "vite": "^7.0.0"
+  }
+}
+```
+
+## 🎨 Tailwind Config Completo
+
+```javascript
+/** @type {import('tailwindcss').Config} */
+export default {
+  darkMode: ["class"],
+  content: [
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
+  ],
+  prefix: "",
+  theme: {
+    container: {
+      center: true,
+      padding: "2rem",
+      screens: {
+        "2xl": "1400px",
+      },
+    },
+    extend: {
+      colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      },
+    },
+  },
+  plugins: [require("tailwindcss-animate")],
+}
+```
+
+## 🌐 CSS Global
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 94.1%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+```
+
+## ⚙️ Vite Config
+
+```typescript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import { resolve } from 'path'
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, './src'),
+    },
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-ui': ['lucide-react'],
+          'vendor-charts': ['recharts'],
+          'vendor-utils': ['date-fns', 'lodash'],
+        },
+        chunkFileNames: (chunkInfo) => {
+          const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/').pop() : 'chunk'
+          return `js/[name]-[hash].js`
+        },
+        entryFileNames: 'js/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]'
+      }
+    },
+    target: 'es2015',
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+        pure_funcs: ['console.log', 'console.info', 'console.debug']
+      }
+    },
+    chunkSizeWarningLimit: 1000,
+    sourcemap: false
+  },
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom',
+      'react-router-dom',
+      'lucide-react',
+      'recharts'
+    ]
+  },
+  server: {
+    port: 3001,
+    host: true,
+    strictPort: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '/api')
+      }
+    }
+  },
+  define: {
+    global: 'globalThis'
+  }
+})
+```
+
+## 🎯 App.tsx Principal
+
+```tsx
+import React, { useState, useEffect, Suspense, lazy } from 'react'
+import { Routes, Route, Link, useLocation, useSearchParams } from 'react-router-dom'
+import LoadingSpinner from './components/ui/LoadingSpinner'
+import { Code } from 'lucide-react'
+
+// Lazy loading para otimizar bundle
+const RFMAnalysis = lazy(() => import('./pages/RFMAnalysis'))
+const AlertasDashboard = lazy(() => import('./pages/AlertasDashboard'))
+const MetricasTempo = lazy(() => import('./pages/MetricasTempo'))
+const DashboardExecutivo = lazy(() => import('./modules/dashboard/DashboardExecutivo'))
+const Produtos = lazy(() => import('./pages/Produtos'))
+const Clientes = lazy(() => import('./pages/Clientes'))
+const DashboardPage = lazy(() => import('./modules/dashboard/DashboardPage'))
+
+function Vendas() {
+  return (
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold text-gray-900">💰 Vendas</h2>
+      
+      <div className="bg-white rounded-lg shadow p-6">
+        <h3 className="text-lg font-semibold mb-4">Análise de Vendas</h3>
+        <p className="text-gray-600 mb-4">
+          Dados de 4.515 vendas registradas no sistema.
+        </p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-gray-50 p-4 rounded">
+            <h4 className="font-semibold">Total Vendas</h4>
+            <p className="text-xl font-bold text-blue-600">4,515</p>
+          </div>
+          <div className="bg-gray-50 p-4 rounded">
+            <h4 className="font-semibold">Faturamento</h4>
+            <p className="text-xl font-bold text-green-600">R$ 1.2M</p>
+          </div>
+          <div className="bg-gray-50 p-4 rounded">
+            <h4 className="font-semibold">Ticket Médio</h4>
+            <p className="text-xl font-bold text-purple-600">R$ 268</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function App() {
+  const location = useLocation()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [showDebugger, setShowDebugger] = useState(false)
+  
+  const [currentView, setCurrentView] = useState<string>('default')
+  const [selectedClientId, setSelectedClientId] = useState<string | null>(null)
+  const [originPage, setOriginPage] = useState<string | null>(null)
+  
+  useEffect(() => {
+    const view = searchParams.get('view')
+    const clienteId = searchParams.get('cliente_id')
+    const origem = searchParams.get('origem')
+    
+    if (view === 'clientes-ver-perfil' && clienteId) {
+      setCurrentView('clientes-ver-perfil')
+      setSelectedClientId(clienteId)
+      setOriginPage(origem)
+    } else {
+      setCurrentView('default')
+      setSelectedClientId(null)
+      setOriginPage(null)
+    }
+  }, [searchParams])
+  
+  const voltarParaOrigem = () => {
+    if (originPage === 'rfm-detalhes-clientes') {
+      window.location.href = '/rfm?voltar_para_detalhes=true'
+    } else {
+      setSearchParams({})
+      setCurrentView('default')
+      setSelectedClientId(null)
+      setOriginPage(null)
+    }
+  }
+  
+  const navigation = [
+    { name: 'Dashboard', href: '/', icon: '📊' },
+    { name: 'Executivo', href: '/executivo', icon: '👔' },
+    { name: 'Análise RFM', href: '/rfm', icon: '🎯' },
+    { name: 'Alertas RFM', href: '/alertas', icon: '🚨' },
+    { name: 'Métricas Tempo', href: '/metricas', icon: '⏱️' },
+    { name: 'Clientes', href: '/clientes', icon: '👥' },
+    { name: 'Vendas', href: '/vendas', icon: '💰' },
+    { name: 'Produtos', href: '/produtos', icon: '📦' },
+  ]
+
+  return (
+    <div className="flex h-screen bg-gray-100">
+      {/* Sidebar */}
+      <div className="w-64 bg-white shadow-lg">
+        <div className="p-6 bg-blue-600">
+          <h1 className="text-xl font-bold text-white">📊 Painel KPIs</h1>
+        </div>
+        
+        <nav className="mt-6">
+          {navigation.map((item) => {
+            const isActive = location.pathname === item.href
+            return (
+              <Link
+                key={item.name}
+                to={item.href}
+                className={`
+                  flex items-center px-6 py-3 text-sm font-medium transition-colors
+                  ${isActive 
+                    ? 'bg-blue-100 text-blue-900 border-r-2 border-blue-600' 
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  }
+                `}
+              >
+                <span className="mr-3">{item.icon}</span>
+                {item.name}
+              </Link>
+            )
+          })}
+        </nav>
+        
+        <div className="absolute bottom-0 w-64 p-4 bg-gray-50">
+          <p className="text-xs text-gray-500">Sprint 2 - Sistema Funcional</p>
+          <p className="text-xs text-gray-400">v1.0.0</p>
+        </div>
+      </div>
+
+      {/* Main content */}
+      <div className="flex-1 overflow-auto">
+        <header className="bg-white shadow-sm border-b">
+          <div className="px-6 py-4 flex items-center justify-between">
+            <h1 className="text-2xl font-semibold text-gray-900">
+              {navigation.find(item => item.href === location.pathname)?.name || 'Dashboard'}
+            </h1>
+            
+            <button
+              onClick={() => setShowDebugger(true)}
+              className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm transition-colors"
+              title="Abrir Debugger de Navegação"
+            >
+              <Code className="h-4 w-4" />
+              Debug
+            </button>
+          </div>
+        </header>
+
+        <main className="p-6">
+          <Suspense fallback={<LoadingSpinner size="lg" text="Carregando página..." />}>
+            {currentView === 'clientes-ver-perfil' && selectedClientId ? (
+              <div className="space-y-6">
+                <div className="flex items-center gap-4">
+                  <h2 className="text-2xl font-bold text-gray-900">👤 Perfil do Cliente</h2>
+                  <span className="text-sm text-gray-500">
+                    {originPage === 'rfm-detalhes-clientes' ? 'Vindo de: Análise RFM → Detalhes dos Clientes' : 'Perfil Detalhado'}
+                  </span>
+                </div>
+                
+                <Clientes 
+                  forceViewMode="perfil" 
+                  selectedClientId={selectedClientId} 
+                  onBackToList={voltarParaOrigem}
+                />
+              </div>
+            ) : (
+              <Routes>
+                <Route path="/" element={<DashboardPage />} />
+                <Route path="/executivo" element={<DashboardExecutivo />} />
+                <Route path="/rfm" element={<RFMAnalysis />} />
+                <Route path="/alertas" element={<AlertasDashboard />} />
+                <Route path="/metricas" element={<MetricasTempo />} />
+                <Route path="/clientes" element={<Clientes />} />
+                <Route path="/vendas" element={<Vendas />} />
+                <Route path="/produtos" element={<Produtos />} />
+              </Routes>
+            )}
+          </Suspense>
+        </main>
+      </div>
+    </div>
+  )
+}
+
+export default App
+```
+
+## 🎴 Componentes UI Base
+
+### Card Component
+```tsx
+import React from "react"
+
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode
+}
+
+interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode
+}
+
+interface CardTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
+  children: React.ReactNode
+}
+
+interface CardContentProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode
+}
+
+export const Card: React.FC<CardProps> = ({ children, className = '', ...props }) => (
+  <div
+    className={`rounded-lg border bg-white text-gray-900 shadow-sm ${className}`}
+    {...props}
+  >
+    {children}
+  </div>
+)
+
+export const CardHeader: React.FC<CardHeaderProps> = ({ children, className = '', ...props }) => (
+  <div
+    className={`flex flex-col space-y-1.5 p-6 ${className}`}
+    {...props}
+  >
+    {children}
+  </div>
+)
+
+export const CardTitle: React.FC<CardTitleProps> = ({ children, className = '', ...props }) => (
+  <h3
+    className={`text-2xl font-semibold leading-none tracking-tight ${className}`}
+    {...props}
+  >
+    {children}
+  </h3>
+)
+
+export const CardContent: React.FC<CardContentProps> = ({ children, className = '', ...props }) => (
+  <div className={`p-6 pt-0 ${className}`} {...props}>
+    {children}
+  </div>
+)
+```
+
+### Loading Spinner
+```tsx
+import React from 'react'
+
+interface LoadingSpinnerProps {
+  size?: 'sm' | 'md' | 'lg'
+  text?: string
+  className?: string
+}
+
+const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ 
+  size = 'md', 
+  text, 
+  className = '' 
+}) => {
+  const sizeClasses = {
+    sm: 'h-8 w-8',
+    md: 'h-12 w-12',
+    lg: 'h-32 w-32'
+  }
+
+  return (
+    <div className={`flex flex-col items-center justify-center ${className}`}>
+      <div className={`animate-spin rounded-full border-b-2 border-blue-600 ${sizeClasses[size]}`}></div>
+      {text && (
+        <p className="mt-4 text-sm text-gray-600">{text}</p>
+      )}
+    </div>
+  )
+}
+
+export default LoadingSpinner
+```
+
+### Filtro Temporal
+```tsx
+import React from 'react'
+import { Calendar, Clock } from 'lucide-react'
+
+interface FiltroTemporalProps {
+  periodoSelecionado: string
+  onPeriodoChange: (periodo: string) => void
+  onCustomDateChange?: (dataInicio: string, dataFim: string) => void
+  showCustomDate?: boolean
+  className?: string
+}
+
+export const PERIODOS_OPCOES = [
+  { value: 'semana-atual', label: 'Esta Semana', icon: '📅' },
+  { value: 'semana-passada', label: 'Semana Passada', icon: '📆' },
+  { value: 'mes-atual', label: 'Este Mês', icon: '🗓️' },
+  { value: 'mes-passado', label: 'Mês Passado', icon: '🗓️' },
+  { value: 'trimestre-atual', label: 'Este Trimestre', icon: '📊' },
+  { value: 'trimestre-passado', label: 'Trimestre Passado', icon: '📊' },
+  { value: 'ano-atual', label: 'Este Ano', icon: '📈' },
+  { value: 'ano-passado', label: 'Ano Passado', icon: '📈' },
+  { value: 'ultimos-7-dias', label: 'Últimos 7 Dias', icon: '⏰' },
+  { value: 'ultimos-30-dias', label: 'Últimos 30 Dias', icon: '⏰' },
+  { value: 'ultimos-90-dias', label: 'Últimos 90 Dias', icon: '⏰' },
+  { value: 'ultimos-365-dias', label: 'Últimos 365 Dias', icon: '⏰' },
+  { value: 'todos', label: 'Todos (desde 2000)', icon: '🌍' },
+  { value: 'personalizado', label: 'Período Personalizado', icon: '⚙️' }
+]
+
+export default function FiltroTemporal({
+  periodoSelecionado,
+  onPeriodoChange,
+  onCustomDateChange,
+  showCustomDate = true,
+  className = ''
+}: FiltroTemporalProps) {
+  const [dataInicio, setDataInicio] = React.useState('')
+  const [dataFim, setDataFim] = React.useState('')
+
+  const handlePeriodoChange = (periodo: string) => {
+    onPeriodoChange(periodo)
+    
+    if (periodo === 'personalizado' && dataInicio && dataFim && onCustomDateChange) {
+      onCustomDateChange(dataInicio, dataFim)
+    }
+  }
+
+  const handleCustomDateApply = () => {
+    if (dataInicio && dataFim && onCustomDateChange) {
+      onCustomDateChange(dataInicio, dataFim)
+    }
+  }
+
+  const isCustomSelected = periodoSelecionado === 'personalizado'
+
+  return (
+    <div className={`bg-white rounded-lg shadow-sm border p-4 ${className}`}>
+      <div className="flex items-center gap-2 mb-3">
+        <Clock className="h-4 w-4 text-blue-600" />
+        <h3 className="text-sm font-medium text-gray-900">Filtro Temporal</h3>
+      </div>
+
+      <div className="space-y-2">
+        <label className="text-xs font-medium text-gray-700">Período:</label>
+        <select
+          value={periodoSelecionado}
+          onChange={(e) => handlePeriodoChange(e.target.value)}
+          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        >
+          {PERIODOS_OPCOES.map((opcao) => (
+            <option key={opcao.value} value={opcao.value}>
+              {opcao.icon} {opcao.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {isCustomSelected && showCustomDate && (
+        <div className="mt-4 space-y-3 pt-3 border-t border-gray-200">
+          <div className="flex items-center gap-2 text-xs text-gray-600">
+            <Calendar className="h-3 w-3" />
+            <span>Defina o período personalizado:</span>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="text-xs text-gray-600">Data Início:</label>
+              <input
+                type="date"
+                value={dataInicio}
+                onChange={(e) => setDataInicio(e.target.value)}
+                min="2000-01-01"
+                max={new Date().toISOString().split('T')[0]}
+                className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+            
+            <div>
+              <label className="text-xs text-gray-600">Data Fim:</label>
+              <input
+                type="date"
+                value={dataFim}
+                onChange={(e) => setDataFim(e.target.value)}
+                min={dataInicio || "2000-01-01"}
+                max={new Date().toISOString().split('T')[0]}
+                className="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+
+          <button
+            onClick={handleCustomDateApply}
+            disabled={!dataInicio || !dataFim}
+            className="w-full px-3 py-2 text-xs font-medium text-white bg-blue-600 rounded hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+          >
+            Aplicar Período Personalizado
+          </button>
+        </div>
+      )}
+
+      <div className="mt-3 pt-2 border-t border-gray-100">
+        <div className="text-xs text-gray-500">
+          <span className="font-medium">Período ativo:</span>
+          <br />
+          <span className="text-blue-600">
+            {PERIODOS_OPCOES.find(p => p.value === periodoSelecionado)?.label || 'Todos os dados'}
+          </span>
+          {isCustomSelected && dataInicio && dataFim && (
+            <span className="block text-gray-600 mt-1">
+              {new Date(dataInicio).toLocaleDateString('pt-BR')} até {new Date(dataFim).toLocaleDateString('pt-BR')}
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+```
+
+## 📊 Dashboard Page Exemplo
+
+```tsx
+import { useState, useEffect } from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Users, ShoppingCart, Package, TrendingUp, DollarSign, Activity, AlertTriangle } from 'lucide-react'
+import FiltroTemporal from '@/components/ui/FiltroTemporal'
+
+interface KPIData {
+  totalClientes: number
+  totalVendas: number
+  receitaTotal: number
+  ticketMedio: number
+  clientesAtivos: number
+  crescimentoMensal: number
+}
+
+export default function DashboardPage() {
+  const [kpis, setKpis] = useState<KPIData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [periodoSelecionado, setPeriodoSelecionado] = useState('todos')
+  const [filtrosPersonalizados, setFiltrosPersonalizados] = useState({ dataInicio: '', dataFim: '' })
+
+  const fetchKPIs = async (periodo?: string, filtros?: { dataInicio?: string; dataFim?: string }) => {
+    try {
+      setLoading(true)
+      setError('')
+      
+      const params = new URLSearchParams()
+      
+      if (periodo && periodo !== 'todos') {
+        params.append('periodo', periodo)
+      }
+      
+      if (filtros?.dataInicio && filtros?.dataFim && periodo === 'personalizado') {
+        params.append('dataInicio', filtros.dataInicio)
+        params.append('dataFim', filtros.dataFim)
+      }
+
+      const url = `http://localhost:3001/api/v1/dashboard/kpis${params.toString() ? '?' + params.toString() : ''}`
+      const response = await fetch(url)
+      
+      if (!response.ok) throw new Error('Erro ao buscar KPIs')
+      
+      const data = await response.json()
+      setKpis(data)
+    } catch (err) {
+      setError('Erro ao carregar dados do dashboard')
+      console.error('Erro:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchKPIs(periodoSelecionado, filtrosPersonalizados)
+  }, [periodoSelecionado])
+
+  const handlePeriodoChange = (periodo: string) => {
+    setPeriodoSelecionado(periodo)
+  }
+
+  const handleCustomDateChange = (dataInicio: string, dataFim: string) => {
+    setFiltrosPersonalizados({ dataInicio, dataFim })
+    fetchKPIs('personalizado', { dataInicio, dataFim })
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardContent className="flex items-center justify-center py-12">
+            <div className="text-center">
+              <AlertTriangle className="h-16 w-16 mx-auto text-red-400 mb-4" />
+              <h3 className="text-lg font-semibold text-red-900 mb-2">Erro ao Carregar</h3>
+              <p className="text-red-600">{error}</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header com Filtro */}
+      <div className="flex flex-col lg:flex-row gap-6">
+        <div className="flex-1">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">📊 Dashboard Geral</h2>
+          <p className="text-gray-600">Visão geral dos indicadores principais com filtros temporais</p>
+        </div>
+        
+        <div className="lg:w-80">
+          <FiltroTemporal
+            periodoSelecionado={periodoSelecionado}
+            onPeriodoChange={handlePeriodoChange}
+            onCustomDateChange={handleCustomDateChange}
+            className="h-fit"
+          />
+        </div>
+      </div>
+
+      {/* KPIs Principais */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total de Clientes</p>
+                <p className="text-2xl font-bold text-gray-900">{kpis?.totalClientes.toLocaleString()}</p>
+              </div>
+              <Users className="h-8 w-8 text-blue-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total de Vendas</p>
+                <p className="text-2xl font-bold text-gray-900">{kpis?.totalVendas.toLocaleString()}</p>
+              </div>
+              <ShoppingCart className="h-8 w-8 text-green-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Receita Total</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {kpis?.receitaTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                </p>
+              </div>
+              <DollarSign className="h-8 w-8 text-purple-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Ticket Médio</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {kpis?.ticketMedio.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                </p>
+              </div>
+              <TrendingUp className="h-8 w-8 text-yellow-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Clientes Ativos</p>
+                <p className="text-2xl font-bold text-gray-900">{kpis?.clientesAtivos.toLocaleString()}</p>
+              </div>
+              <Activity className="h-8 w-8 text-indigo-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Crescimento Mensal</p>
+                <p className={`text-2xl font-bold ${kpis && kpis.crescimentoMensal >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {kpis?.crescimentoMensal.toFixed(1)}%
+                </p>
+              </div>
+              <div className={`h-8 w-8 ${kpis && kpis.crescimentoMensal >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                <TrendingUp className="h-8 w-8" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
+}
+```
+
+## 🔧 TypeScript Config
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
+```
+
+## 📝 PostCSS Config
+
+```javascript
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+```
+
+---
+
+**Nota**: Estes exemplos de código fornecem uma base sólida para implementar o layout no lovable.dev, incluindo todos os componentes principais, configurações e padrões de design utilizados no projeto original. 

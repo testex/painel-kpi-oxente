@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # Backend API (Desenvolvimento)
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    image: samuelbuarque/painel-kpi-backend:dev
+    container_name: painel-kpi-backend-dev
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - FRONTEND_URL=http://localhost:5173
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - painel-kpi-network
+    restart: unless-stopped
+    command: npm run dev
+
+  # Frontend React (Desenvolvimento)
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    image: samuelbuarque/painel-kpi-frontend:dev
+    container_name: painel-kpi-frontend-dev
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - painel-kpi-network
+    restart: unless-stopped
+    command: npm run dev -- --host 0.0.0.0
+
+networks:
+  painel-kpi-network:
+    driver: bridge 

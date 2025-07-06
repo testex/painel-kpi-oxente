@@ -45,9 +45,37 @@ FRONTEND_URL=http://localhost:5173
 
 ---
 
-## Docker (em breve)
+## Docker
 
-O projeto será preparado para rodar com Docker e docker-compose.
+O projeto está preparado para rodar com Docker e docker-compose.
+
+### Produção
+```bash
+# Build e start dos containers
+docker-compose up --build
+
+# Rodar em background
+docker-compose up -d --build
+
+# Parar containers
+docker-compose down
+```
+
+### Desenvolvimento
+```bash
+# Build e start dos containers de desenvolvimento
+docker-compose -f docker-compose.dev.yml up --build
+
+# Rodar em background
+docker-compose -f docker-compose.dev.yml up -d --build
+
+# Parar containers
+docker-compose -f docker-compose.dev.yml down
+```
+
+### URLs
+- **Produção**: http://localhost (frontend) e http://localhost:3001 (backend)
+- **Desenvolvimento**: http://localhost:5173 (frontend) e http://localhost:3001 (backend)
 
 ---
 

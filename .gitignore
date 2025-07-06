@@ -26,6 +26,11 @@ Thumbs.db
 
 # Docker
 *.local
+.dockerignore
 
 # Scripts com tokens
-push.ps1 
+push.ps1
+pull.ps1
+recover.ps1
+docker-login.ps1
+docker-push.ps1 

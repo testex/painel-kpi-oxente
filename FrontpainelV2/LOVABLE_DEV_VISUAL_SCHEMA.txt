@@ -1,0 +1,525 @@
+# Esquema Visual - Painel KPI V2
+
+## 🗺️ MAPA MENTAL DA ESTRUTURA
+
+```
+📊 PAINEL KPIs V2
+├── 🎯 NAVEGAÇÃO PRINCIPAL (Sidebar)
+│   ├── 📊 DASHBOARDS
+│   │   ├── 🏠 Visão Geral (/)
+│   │   │   ├── 📈 6 Cards KPI Principais
+│   │   │   ├── ⏰ Filtro Temporal
+│   │   │   └── 📊 Gráficos de Tendência
+│   │   │
+│   │   ├── 👔 Dashboard Executivo (/executivo)
+│   │   │   ├── 🎯 KPIs Estratégicos
+│   │   │   ├── 📊 Gráficos Executivos
+│   │   │   └── 📈 Métricas de Alto Nível
+│   │   │
+│   │   └── ⚡ Tempo Real (/tempo-real)
+│   │       ├── 🔄 Dados ao Vivo
+│   │       ├── 📊 Monitoramento
+│   │       └── 🚨 Alertas em Tempo Real
+│   │
+│   ├── 📈 ANALYTICS
+│   │   ├── 🎯 Análise RFM (/rfm)
+│   │   │   ├── 📊 Tabs de Análise
+│   │   │   │   ├── 📈 Visão Geral RFM
+│   │   │   │   ├── 👥 Segmentação de Clientes
+│   │   │   │   ├── 📊 Gráficos Scatter Plot
+│   │   │   │   └── 📋 Tabelas Detalhadas
+│   │   │   │
+│   │   │   ├── 🔍 Filtros Avançados
+│   │   │   │   ├── 📅 Período Temporal
+│   │   │   │   ├── 🎯 Critérios RFM
+│   │   │   │   └── 📊 Segmentos
+│   │   │   │
+│   │   │   └── 📋 Ações
+│   │   │       ├── 📥 Exportar Dados
+│   │   │       ├── 📊 Gerar Relatórios
+│   │   │       └── 👥 Ver Detalhes Clientes
+│   │   │
+│   │   ├── 🧪 RFM 2 (/rfm2) - Experimental
+│   │   │   ├── 🔬 Nova Análise
+│   │   │   ├── 📊 Algoritmos Avançados
+│   │   │   └── 📈 Métricas Experimentais
+│   │   │
+│   │   ├── 📦 Produtos (/produtos)
+│   │   │   ├── 📊 Cards de Produtos
+│   │   │   ├── 📈 Performance por Categoria
+│   │   │   ├── 💰 Análise de Receita
+│   │   │   └── 📋 Inventário
+│   │   │
+│   │   └── 💰 Vendas (/vendas)
+│   │       ├── 📊 Dashboard de Vendas
+│   │       ├── 📈 Tendências
+│   │       ├── 💵 Faturamento
+│   │       └── 📋 Histórico
+│   │
+│   ├── 👥 GESTÃO
+│   │   ├── 👤 Clientes (/clientes)
+│   │   │   ├── 📋 Tabela de Clientes
+│   │   │   │   ├── 🔍 Busca e Filtros
+│   │   │   │   ├── 📄 Paginação
+│   │   │   │   └── 📊 Ordenação
+│   │   │   │
+│   │   │   ├── 👤 Perfil do Cliente
+│   │   │   │   ├── 📊 Dados Pessoais
+│   │   │   │   ├── 💰 Histórico de Compras
+│   │   │   │   ├── 📈 Métricas RFM
+│   │   │   │   └── 📋 Preferências
+│   │   │   │
+│   │   │   ├── ➕ CRUD Clientes
+│   │   │   │   ├── ➕ Adicionar Cliente
+│   │   │   │   ├── ✏️ Editar Cliente
+│   │   │   │   ├── 🗑️ Excluir Cliente
+│   │   │   │   └── 👁️ Visualizar Cliente
+│   │   │   │
+│   │   │   └── 🔗 Navegação
+│   │   │       ├── ⬅️ Voltar à Lista
+│   │   │       ├── 🔗 Links RFM
+│   │   │       └── 📊 Relatórios
+│   │   │
+│   │   ├── 🏭 Fornecedores (/fornecedores)
+│   │   │   ├── 📋 Lista de Fornecedores
+│   │   │   ├── 📊 Performance
+│   │   │   └── 💰 Análise de Custos
+│   │   │
+│   │   └── 👨‍💼 Equipe (/equipe)
+│   │       ├── 👥 Gestão de Equipe
+│   │       ├── 📊 Performance Individual
+│   │       └── 🎯 Metas e Objetivos
+│   │
+│   ├── 💹 FINANCEIRO
+│   │   ├── 💰 Receitas (/receitas)
+│   │   │   ├── 📊 Análise de Receitas
+│   │   │   ├── 📈 Tendências
+│   │   │   └── 📋 Relatórios
+│   │   │
+│   │   ├── 💸 Despesas (/despesas)
+│   │   │   ├── 📊 Controle de Despesas
+│   │   │   ├── 📈 Análise de Custos
+│   │   │   └── 📋 Categorização
+│   │   │
+│   │   ├── 💳 Fluxo de Caixa (/fluxo-caixa)
+│   │   │   ├── 📊 Gestão de Caixa
+│   │   │   ├── 📈 Projeções
+│   │   │   └── 📋 Relatórios
+│   │   │
+│   │   └── 📊 Lucratividade (/lucratividade)
+│   │       ├── 📊 Análise de Margem
+│   │       ├── 📈 Indicadores de Lucro
+│   │       └── 📋 Relatórios
+│   │
+│   ├── 📋 RELATÓRIOS
+│   │   ├── 📈 Gerenciais (/relatorios/gerenciais)
+│   │   │   ├── 📊 Relatórios Executivos
+│   │   │   ├── 📈 Dashboards Gerenciais
+│   │   │   └── 📋 Análises Estratégicas
+│   │   │
+│   │   ├── ⚙️ Operacionais (/relatorios/operacionais)
+│   │   │   ├── 📊 Relatórios Diários
+│   │   │   ├── 📈 Métricas Operacionais
+│   │   │   └── 📋 Controles
+│   │   │
+│   │   └── 🎨 Personalizados (/relatorios/personalizados)
+│   │       ├── 🎯 Relatórios Customizados
+│   │       ├── 📊 Filtros Avançados
+│   │       └── 📥 Exportação
+│   │
+│   └── ⚙️ CONFIGURAÇÕES
+│       ├── 👤 Perfil (/perfil)
+│       │   ├── 👤 Dados Pessoais
+│       │   ├── 🔐 Segurança
+│       │   └── 🎨 Preferências
+│       │
+│       ├── 🔧 Sistema (/configuracoes)
+│       │   ├── ⚙️ Configurações Gerais
+│       │   ├── 🎨 Tema e Aparência
+│       │   └── 📊 Configurações de Dados
+│       │
+│       └── 🔗 Integração (/integracao)
+│           ├── 🔗 ERP
+│           ├── 🔌 APIs Externas
+│           └── 📊 Sincronização
+│
+├── 🎛️ CONTROLES PRINCIPAIS
+│   ├── 🔍 BARRA DE BUSCA
+│   │   ├── 🔍 Busca Global
+│   │   ├── 📊 Filtros Rápidos
+│   │   └── 📋 Histórico de Busca
+│   │
+│   ├── ⏰ FILTROS TEMPORAIS
+│   │   ├── 📅 Períodos Pré-definidos
+│   │   │   ├── 📅 Esta Semana
+│   │   │   ├── 📅 Este Mês
+│   │   │   ├── 📅 Este Trimestre
+│   │   │   ├── 📅 Este Ano
+│   │   │   └── 🌍 Todos os Dados
+│   │   │
+│   │   ├── ⏰ Períodos Específicos
+│   │   │   ├── ⏰ Últimos 7 Dias
+│   │   │   ├── ⏰ Últimos 30 Dias
+│   │   │   ├── ⏰ Últimos 90 Dias
+│   │   │   └── ⏰ Últimos 365 Dias
+│   │   │
+│   │   └── ⚙️ Período Personalizado
+│   │       ├── 📅 Data Início
+│   │       ├── 📅 Data Fim
+│   │       └── ✅ Aplicar
+│   │
+│   ├── 📊 FILTROS AVANÇADOS
+│   │   ├── 🎯 Critérios RFM
+│   │   ├── 📦 Categorias de Produtos
+│   │   ├── 👥 Segmentos de Clientes
+│   │   └── 💰 Faixas de Valor
+│   │
+│   └── 🔧 AÇÕES RÁPIDAS
+│       ├── 📥 Exportar
+│       ├── 🖨️ Imprimir
+│       ├── 📧 Compartilhar
+│       └── ⭐ Favoritar
+│
+├── 📱 RESPONSIVIDADE
+│   ├── 📱 MOBILE (< 768px)
+│   │   ├── 📱 Sidebar Overlay
+│   │   ├── 📱 Menu Hambúrguer
+│   │   ├── 📱 Grid 1 Coluna
+│   │   └── 📱 Cards Empilhados
+│   │
+│   ├── 📱 TABLET (768px - 1024px)
+│   │   ├── 📱 Sidebar Condensada
+│   │   ├── 📱 Grid 2 Colunas
+│   │   └── 📱 Cards Médios
+│   │
+│   └── 💻 DESKTOP (> 1024px)
+│       ├── 💻 Sidebar Fixa
+│       ├── 💻 Grid 3 Colunas
+│       └── 💻 Cards Grandes
+│
+├── 🎨 ESTADOS VISUAIS
+│   ├── ⏳ LOADING
+│   │   ├── ⏳ Spinner Central
+│   │   ├── ⏳ Skeleton Loading
+│   │   └── ⏳ Progress Bar
+│   │
+│   ├── ❌ ERRO
+│   │   ├── ❌ Mensagem de Erro
+│   │   ├── ❌ Ícone de Alerta
+│   │   └── 🔄 Botão de Retry
+│   │
+│   ├── ✅ SUCESSO
+│   │   ├── ✅ Notificação
+│   │   ├── ✅ Ícone de Check
+│   │   └── ✅ Feedback Visual
+│   │
+│   └── 🔍 VAZIO
+│       ├── 🔍 Estado Vazio
+│       ├── 🔍 Ícone Ilustrativo
+│       └── 🔍 Call to Action
+│
+├── 🔗 FLUXOS DE NAVEGAÇÃO
+│   ├── 🔗 RFM → CLIENTES
+│   │   ├── 🎯 RFM Detalhes Clientes
+│   │   ├── 👤 Ver Perfil Cliente
+│   │   ├── ⬅️ Voltar RFM
+│   │   └── 📊 Navegação Contextual
+│   │
+│   ├── 🔗 DASHBOARD → DETALHES
+│   │   ├── 📊 Card KPI
+│   │   ├── 🔍 Clicar para Detalhes
+│   │   ├── 📈 Página Detalhada
+│   │   └── ⬅️ Voltar Dashboard
+│   │
+│   └── 🔗 FILTROS → RESULTADOS
+│       ├── ⏰ Aplicar Filtro
+│       ├── 🔄 Atualizar Dados
+│       ├── 📊 Mostrar Resultados
+│       └── 🔄 Manter Estado
+│
+└── 📊 DADOS E API
+    ├── 📊 ENDPOINTS PRINCIPAIS
+    │   ├── 📊 GET /api/v1/dashboard/kpis
+    │   ├── 👥 GET /api/v1/clientes
+    │   ├── 📦 GET /api/v1/produtos
+    │   ├── 🎯 GET /api/v1/rfm/analise
+    │   └── 💰 GET /api/v1/vendas
+    │
+    ├── 📊 ESTRUTURAS DE DADOS
+    │   ├── 📊 KPIData
+    │   ├── 👥 ClienteData
+    │   ├── 📦 ProdutoData
+    │   ├── 🎯 RFMData
+    │   └── 💰 VendaData
+    │
+    └── 📊 FILTROS E PARÂMETROS
+        ├── ⏰ Período Temporal
+        ├── 🎯 Critérios RFM
+        ├── 📦 Categorias
+        └── 👥 Segmentos
+```
+
+## 🎯 DIAGRAMA DE FLUXO - NAVEGAÇÃO PRINCIPAL
+
+```
+🏠 HOME (/)
+├── 📊 Dashboard Geral
+│   ├── 📈 6 Cards KPI
+│   │   ├── 👥 Total Clientes
+│   │   ├── 💰 Total Vendas
+│   │   ├── 💵 Receita Total
+│   │   ├── 📊 Ticket Médio
+│   │   ├── ⚡ Clientes Ativos
+│   │   └── 📈 Crescimento Mensal
+│   │
+│   ├── ⏰ Filtro Temporal
+│   │   ├── 📅 Seletor de Período
+│   │   ├── 📅 Datas Personalizadas
+│   │   └── ✅ Aplicar Filtro
+│   │
+│   └── 📊 Informações do Sistema
+│       ├── 📋 Versão
+│       ├── 🔄 Status
+│       └── 📈 Performance
+│
+├── 👔 Dashboard Executivo (/executivo)
+│   ├── 🎯 KPIs Estratégicos
+│   ├── 📊 Gráficos Executivos
+│   └── 📈 Métricas de Alto Nível
+│
+├── 🎯 Análise RFM (/rfm)
+│   ├── 📊 Tabs de Análise
+│   │   ├── 📈 Visão Geral
+│   │   ├── 👥 Segmentação
+│   │   ├── 📊 Gráficos
+│   │   └── 📋 Tabelas
+│   │
+│   ├── 🔍 Filtros RFM
+│   │   ├── 🎯 Recência
+│   │   ├── 💰 Frequência
+│   │   └── 💵 Valor Monetário
+│   │
+│   └── 📋 Ações
+│       ├── 👥 Ver Detalhes Clientes
+│       ├── 📥 Exportar
+│       └── 📊 Relatórios
+│
+├── 👥 Clientes (/clientes)
+│   ├── 📋 Lista de Clientes
+│   │   ├── 🔍 Busca
+│   │   ├── 📄 Paginação
+│   │   └── 📊 Ordenação
+│   │
+│   ├── 👤 Perfil do Cliente
+│   │   ├── 📊 Dados Pessoais
+│   │   ├── 💰 Histórico
+│   │   └── 📈 Métricas RFM
+│   │
+│   └── ➕ CRUD
+│       ├── ➕ Adicionar
+│       ├── ✏️ Editar
+│       └── 🗑️ Excluir
+│
+└── 📦 Produtos (/produtos)
+    ├── 📊 Cards de Produtos
+    ├── 📈 Performance
+    └── 💰 Análise de Receita
+```
+
+## 🎨 DIAGRAMA DE COMPONENTES UI
+
+```
+🎴 COMPONENTES BASE
+├── 📦 Card
+│   ├── 📦 CardHeader
+│   ├── 📦 CardTitle
+│   ├── 📦 CardContent
+│   └── 📦 CardFooter
+│
+├── ⏳ LoadingSpinner
+│   ├── ⏳ Spinner Circular
+│   ├── ⏳ Texto de Loading
+│   └── ⏳ Tamanhos (sm, md, lg)
+│
+├── ⏰ FiltroTemporal
+│   ├── ⏰ Seletor de Período
+│   ├── ⏰ Campos de Data
+│   ├── ⏰ Validação
+│   └── ⏰ Indicador Ativo
+│
+├── 📄 Paginacao
+│   ├── 📄 Navegação
+│   ├── 📄 Indicador de Página
+│   └── 📄 Itens por Página
+│
+└── 🔍 Busca
+    ├── 🔍 Campo de Busca
+    ├── 🔍 Filtros Rápidos
+    └── 🔍 Histórico
+```
+
+## 📱 DIAGRAMA RESPONSIVO
+
+```
+📱 MOBILE (< 768px)
+├── 📱 Layout
+│   ├── 📱 Sidebar: Overlay
+│   ├── 📱 Header: Compacto
+│   ├── 📱 Main: Full Width
+│   └── 📱 Footer: Oculto
+│
+├── 📱 Navegação
+│   ├── 📱 Menu Hambúrguer
+│   ├── 📱 Sidebar Slide
+│   ├── 📱 Overlay Escuro
+│   └── 📱 Fechar ao Clicar
+│
+├── 📱 Grid
+│   ├── 📱 Cards: 1 Coluna
+│   ├── 📱 Espaçamento: Reduzido
+│   └── 📱 Tamanho: Adaptativo
+│
+└── 📱 Interações
+    ├── 📱 Touch Friendly
+    ├── 📱 Swipe Gestures
+    └── 📱 Zoom Disabled
+
+📱 TABLET (768px - 1024px)
+├── 📱 Layout
+│   ├── 📱 Sidebar: Condensada
+│   ├── 📱 Header: Médio
+│   ├── 📱 Main: Adaptativo
+│   └── 📱 Footer: Visível
+│
+├── 📱 Navegação
+│   ├── 📱 Sidebar: Fixa
+│   ├── 📱 Ícones + Texto
+│   └── 📱 Hover States
+│
+├── 📱 Grid
+│   ├── 📱 Cards: 2 Colunas
+│   ├── 📱 Espaçamento: Médio
+│   └── 📱 Tamanho: Médio
+│
+└── 📱 Interações
+    ├── 📱 Mouse + Touch
+    ├── 📱 Hover Effects
+    └── 📱 Click Events
+
+💻 DESKTOP (> 1024px)
+├── 💻 Layout
+│   ├── 💻 Sidebar: Fixa (256px)
+│   ├── 💻 Header: Completo
+│   ├── 💻 Main: Flexível
+│   └── 💻 Footer: Completo
+│
+├── 💻 Navegação
+│   ├── 💻 Sidebar: Sempre Visível
+│   ├── 💻 Texto Completo
+│   └── 💻 Hover + Active States
+│
+├── 💻 Grid
+│   ├── 💻 Cards: 3 Colunas
+│   ├── 💻 Espaçamento: Grande
+│   └── 💻 Tamanho: Grande
+│
+└── 💻 Interações
+    ├── 💻 Mouse Only
+    ├── 💻 Hover Effects
+    └── 💻 Keyboard Navigation
+```
+
+## 🔗 FLUXO DE DADOS
+
+```
+📊 API BACKEND
+├── 📊 GET /api/v1/dashboard/kpis
+│   ├── 📊 Parâmetros: período, dataInicio, dataFim
+│   ├── 📊 Retorna: KPIData
+│   └── 📊 Cache: 5 minutos
+│
+├── 👥 GET /api/v1/clientes
+│   ├── 👥 Parâmetros: page, limit, search, sort
+│   ├── 👥 Retorna: ClienteData[]
+│   └── 👥 Cache: 2 minutos
+│
+├── 🎯 GET /api/v1/rfm/analise
+│   ├── 🎯 Parâmetros: periodo, filtros
+│   ├── 🎯 Retorna: RFMData
+│   └── 🎯 Cache: 10 minutos
+│
+└── 📦 GET /api/v1/produtos
+    ├── 📦 Parâmetros: categoria, performance
+    ├── 📦 Retorna: ProdutoData[]
+    └── 📦 Cache: 5 minutos
+
+📱 FRONTEND
+├── 📱 Componentes
+│   ├── 📱 useState: Estado Local
+│   ├── 📱 useEffect: Fetch Dados
+│   ├── 📱 Loading: Estado de Carregamento
+│   └── 📱 Error: Tratamento de Erro
+│
+├── 📱 Filtros
+│   ├── 📱 FiltroTemporal: Períodos
+│   ├── 📱 Busca: Texto
+│   ├── 📱 Paginação: Page/Limit
+│   └── 📱 Ordenação: Sort
+│
+└── 📱 Renderização
+    ├── 📱 Condicional: Loading/Error/Success
+    ├── 📱 Responsivo: Grid Adaptativo
+    └── 📱 Performance: Lazy Loading
+```
+
+## 🎯 ESTADOS E INTERAÇÕES
+
+```
+🎯 ESTADOS PRINCIPAIS
+├── ⏳ LOADING
+│   ├── ⏳ Spinner Central
+│   ├── ⏳ Texto: "Carregando..."
+│   └── ⏳ Bloqueio de Interação
+│
+├── ❌ ERROR
+│   ├── ❌ Ícone: AlertTriangle
+│   ├── ❌ Título: "Erro ao Carregar"
+│   ├── ❌ Mensagem: Descrição do Erro
+│   └── 🔄 Botão: "Tentar Novamente"
+│
+├── ✅ SUCCESS
+│   ├── ✅ Dados Carregados
+│   ├── ✅ Renderização Normal
+│   └── ✅ Interações Habilitadas
+│
+└── 🔍 EMPTY
+    ├── 🔍 Ícone: Search
+    ├── 🔍 Título: "Nenhum Dado Encontrado"
+    ├── 🔍 Mensagem: "Tente ajustar os filtros"
+    └── 🔍 Call to Action
+
+🔄 INTERAÇÕES
+├── 🖱️ HOVER
+│   ├── 🖱️ Cards: bg-gray-50
+│   ├── 🖱️ Botões: bg-blue-700
+│   └── 🖱️ Links: text-gray-900
+│
+├── ⌨️ FOCUS
+│   ├── ⌨️ Inputs: ring-2 ring-blue-500
+│   ├── ⌨️ Botões: outline-blue-500
+│   └── ⌨️ Links: underline
+│
+├── 👆 ACTIVE
+│   ├── 👆 Sidebar: bg-blue-100
+│   ├── 👆 Botões: scale-95
+│   └── 👆 Cards: shadow-md
+│
+└── 🚫 DISABLED
+    ├── 🚫 Botões: bg-gray-300
+    ├── 🚫 Inputs: opacity-50
+    └── 🚫 Cursor: not-allowed
+```
+
+---
+
+**Nota**: Este esquema visual fornece uma visão completa da estrutura, navegação, componentes e fluxos do sistema, facilitando a implementação no lovable.dev com uma compreensão clara de como todos os elementos se relacionam. 
