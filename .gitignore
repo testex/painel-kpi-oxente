@@ -25,4 +25,7 @@ Thumbs.db
 *.tsbuildinfo
 
 # Docker
-*.local 
+*.local
+
+# Scripts com tokens
+push.ps1 
