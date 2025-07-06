@@ -27,7 +27,7 @@ app.use((req, res, next) => {
 
 // Configuração do CORS
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:8080',
+  origin: ['http://localhost:8080', 'http://localhost:8081', process.env.FRONTEND_URL].filter(Boolean) as string[],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
