@@ -25,7 +25,7 @@ services:
   # Frontend React (Desenvolvimento)
   frontend:
     build: 
-      context: ./frontend
+      context: ./Frontend
       dockerfile: Dockerfile.dev
     image: samuelbuarque/painel-kpi-frontend:dev
     container_name: painel-kpi-frontend-dev
@@ -34,7 +34,7 @@ services:
     depends_on:
       - backend
     volumes:
-      - ./frontend:/app
+      - ./Frontend:/app
       - /app/node_modules
     networks:
       - painel-kpi-network

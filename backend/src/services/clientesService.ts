@@ -125,21 +125,50 @@ export class ClientesService {
   }
 
   // Converter dados do ERP para formato do frontend
-  private mapERPToCliente(erpCliente: ERPCliente): Cliente {
+  private async mapERPToCliente(erpCliente: ERPCliente): Promise<Cliente> {
     console.log(`[ClientesService] Mapeando cliente ERP ID: ${erpCliente.id}`)
     
-    // Calcular campos que o frontend espera
+    // Calcular campos que o frontend espera a partir dos dados reais do ERP
     const dataCadastro = erpCliente.data_nascimento || new Date().toISOString().split('T')[0]
-    const ultimaCompra = new Date().toISOString().split('T')[0] // TODO: Calcular da tabela de vendas
-    const totalCompras = 0 // TODO: Calcular da tabela de vendas
-    const valorTotal = 0 // TODO: Calcular da tabela de vendas
     
-    // Calcular RFM básico (placeholder)
+    // Buscar vendas do cliente para calcular RFM
+    let ultimaCompra = ''
+    let totalCompras = 0
+    let valorTotal = 0
+    let recencia = 0
+    
+    try {
+      const vendasCliente = await this.erpService.getVendas({ cliente_id: parseInt(erpCliente.id, 10) })
+      
+      if (vendasCliente.length > 0) {
+        // Calcular total de compras e valor total
+        totalCompras = vendasCliente.length
+        valorTotal = vendasCliente.reduce((sum, venda) => sum + parseFloat(venda.valor_total || '0'), 0)
+        
+        // Encontrar última compra
+        const vendasOrdenadas = vendasCliente.sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
+        ultimaCompra = vendasOrdenadas[0].data
+        
+        // Calcular recência (dias desde última compra)
+        const hoje = new Date()
+        const dataUltimaCompra = new Date(ultimaCompra)
+        recencia = Math.floor((hoje.getTime() - dataUltimaCompra.getTime()) / (1000 * 60 * 60 * 24))
+      }
+    } catch (error) {
+      console.warn(`[ClientesService] Erro ao buscar vendas do cliente ${erpCliente.id}:`, error)
+      // Se não conseguir buscar vendas, usar valores padrão
+      ultimaCompra = new Date().toISOString().split('T')[0]
+      totalCompras = 0
+      valorTotal = 0
+      recencia = 365 // Assumir que nunca comprou
+    }
+    
+    // Calcular RFM real
     const rfm = {
-      recencia: 30, // TODO: Calcular dias desde última compra
+      recencia: recencia,
       frequencia: totalCompras,
       valor: valorTotal,
-      segmento: this.calcularSegmentoRFM(30, totalCompras, valorTotal)
+      segmento: this.calcularSegmentoRFM(recencia, totalCompras, valorTotal)
     }
     
     return {
@@ -155,13 +184,11 @@ export class ClientesService {
       email: erpCliente.email,
       ativo: erpCliente.ativo === '1',
       dataNascimento: erpCliente.data_nascimento || undefined,
-      // Campos que o frontend espera
       dataCadastro,
       ultimaCompra,
       totalCompras,
       valorTotal,
       rfm,
-      // Campos originais
       enderecos: (erpCliente.enderecos || []).map(endereco => ({
         cep: endereco.endereco.cep,
         logradouro: endereco.endereco.logradouro,
@@ -211,7 +238,7 @@ export class ClientesService {
       const erpClientes = await this.erpService.getClientes(erpFiltros)
       
       // Mapear para formato do frontend
-      let clientes = erpClientes.map(cliente => this.mapERPToCliente(cliente))
+      let clientes = await Promise.all(erpClientes.map(cliente => this.mapERPToCliente(cliente)))
       
       // Aplicar filtros locais que não existem no ERP
       if (filtros.cidade) {

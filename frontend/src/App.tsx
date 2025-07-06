@@ -1,20 +1,39 @@
-import { useState } from 'react'
-import './index.css'
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Index from "./pages/Index";
+import Executivo from "./pages/Executivo";
+import RFM from "./pages/RFM";
+import Clientes from "./pages/Clientes";
+import Alertas from "./pages/Alertas";
+import Vendas from "./pages/Vendas";
+import Produtos from "./pages/Produtos";
+import NotFound from "./pages/NotFound";
 
-function App() {
-  const [count, setCount] = useState(0)
+const queryClient = new QueryClient();
 
-  return (
-    <div className="App">
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-      </div>
-      <p>Edit <code>src/App.tsx</code> and save to test HMR</p>
-    </div>
-  )
-}
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/executivo" element={<Executivo />} />
+          <Route path="/rfm" element={<RFM />} />
+          <Route path="/clientes" element={<Clientes />} />
+          <Route path="/alertas" element={<Alertas />} />
+          <Route path="/vendas" element={<Vendas />} />
+          <Route path="/produtos" element={<Produtos />} />
+          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
-export default App
+export default App;

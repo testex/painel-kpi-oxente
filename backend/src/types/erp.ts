@@ -210,6 +210,10 @@ export interface ERPProdutoFiltros {
   grupo_id?: number
   fornecedor_id?: number
   ativo?: number
+  // Campos para sincronização incremental (quando o ERP suportar)
+  data_modificacao_inicio?: string // Data de início da modificação (YYYY-MM-DD HH:MM:SS)
+  data_modificacao_fim?: string // Data de fim da modificação (YYYY-MM-DD HH:MM:SS)
+  modificado_apos?: string // Data de modificação (para sincronização incremental)
 }
 
 export interface ERPVendaFiltros {
@@ -222,6 +226,11 @@ export interface ERPVendaFiltros {
   data_fim?: string
   cliente_id?: number
   centro_custo_id?: number
+  // Campos para sincronização incremental (quando o ERP suportar)
+  data_modificacao_inicio?: string // Data de início da modificação (YYYY-MM-DD HH:MM:SS)
+  data_modificacao_fim?: string // Data de fim da modificação (YYYY-MM-DD HH:MM:SS)
+  modificado_apos?: string // Data de modificação (para sincronização incremental)
+  criado_apos?: string // Data de criação (para sincronização incremental)
 }
 
 export interface ERPClienteFiltros {
@@ -233,4 +242,8 @@ export interface ERPClienteFiltros {
   situacao?: number
   cidade_id?: number
   estado?: string
+  // Campos para sincronização incremental (quando o ERP suportar)
+  data_modificacao_inicio?: string // Data de início da modificação (YYYY-MM-DD HH:MM:SS)
+  data_modificacao_fim?: string // Data de fim da modificação (YYYY-MM-DD HH:MM:SS)
+  modificado_apos?: string // Data de modificação (para sincronização incremental)
 } 

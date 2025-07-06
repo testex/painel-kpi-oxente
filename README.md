@@ -5,7 +5,7 @@ Painel de indicadores (KPI) com frontend React + Vite e backend Node.js/Express 
 ## Estrutura do Projeto
 
 - **backend/**: API Node.js/Express (TypeScript)
-- **frontend/**: Aplicação React (Vite + TypeScript)
+- **Frontend/**: Aplicação React (Vite + TypeScript)
 
 ---
 
@@ -24,7 +24,7 @@ A API estará disponível em http://localhost:3001
 ### 2. Frontend
 
 ```bash
-cd frontend
+cd Frontend
 npm install
 npm run dev
 ```

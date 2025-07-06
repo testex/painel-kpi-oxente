@@ -16,10 +16,15 @@ const asyncHandler = (fn: (req: Request, res: Response, next?: any) => Promise<a
 
 // GET /api/dashboard/analytics - KPIs principais do dashboard
 router.get('/analytics', asyncHandler(async (req: Request, res: Response) => {
-  console.log('[DashboardRoutes] GET /api/dashboard/analytics')
+  console.log('[DashboardRoutes] GET /api/dashboard/analytics', req.query)
   
   try {
-    const analytics = await dashboardService.getDashboardAnalytics()
+    const { dataInicio, dataFim, periodo } = req.query
+    const analytics = await dashboardService.getDashboardAnalytics({
+      dataInicio: dataInicio as string,
+      dataFim: dataFim as string,
+      periodo: periodo as string
+    })
     
     console.log('[DashboardRoutes] Analytics retornados com sucesso')
     res.json(analytics)

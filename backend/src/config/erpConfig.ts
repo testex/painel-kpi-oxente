@@ -8,6 +8,8 @@ export interface ERPConfig {
   rateLimit: {
     requestsPerSecond: number
     requestsPerDay: number
+    delayBetweenRequests: number // Delay em ms entre requisições
+    retryDelayOnRateLimit: number // Delay em ms quando rate limit é atingido
   }
   timeout: number
   retryAttempts: number
@@ -19,8 +21,10 @@ export const erpConfig: ERPConfig = {
   accessToken: process.env.ERP_API_KEY || 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
   secretAccessToken: process.env.ERP_SECRET || 'YYYYYYYYYYYYYYYYYYYYYYYYYYYYYY',
   rateLimit: {
-    requestsPerSecond: parseInt(process.env.ERP_RATE_LIMIT_REQUESTS_PER_SECOND || '3'),
-    requestsPerDay: parseInt(process.env.ERP_RATE_LIMIT_REQUESTS_PER_DAY || '30000')
+    requestsPerSecond: parseInt(process.env.ERP_RATE_LIMIT_REQUESTS_PER_SECOND || '1'), // Reduzido para 1 req/seg
+    requestsPerDay: parseInt(process.env.ERP_RATE_LIMIT_REQUESTS_PER_DAY || '30000'),
+    delayBetweenRequests: parseInt(process.env.ERP_DELAY_BETWEEN_REQUESTS || '3000'), // 3 segundos entre reqs
+    retryDelayOnRateLimit: parseInt(process.env.ERP_RETRY_DELAY_ON_RATE_LIMIT || '15000') // 15 segundos quando rate limit
   },
   timeout: parseInt(process.env.ERP_TIMEOUT || '30000'), // 30 segundos
   retryAttempts: 3

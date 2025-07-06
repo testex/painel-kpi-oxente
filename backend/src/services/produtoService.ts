@@ -17,117 +17,25 @@ export class ProdutoService {
     this.erpService = new ERPIntegrationService()
   }
 
-  // Dados mockados para produtos
-  private produtos: Produto[] = [
-    {
-      id: 1,
-      nome: 'Smartphone Galaxy S24',
-      categoria: 'Eletrônicos',
-      preco: 3500.00,
-      estoque: 45,
-      vendas: 180,
-      receita: 630000,
-      ticketMedio: 3500,
-      crescimento: 0.15
-    },
-    {
-      id: 2,
-      nome: 'Notebook Dell Inspiron',
-      categoria: 'Informática',
-      preco: 4200.00,
-      estoque: 28,
-      vendas: 95,
-      receita: 399000,
-      ticketMedio: 4200,
-      crescimento: 0.08
-    },
-    {
-      id: 3,
-      nome: 'Fone Bluetooth JBL',
-      categoria: 'Acessórios',
-      preco: 450.00,
-      estoque: 120,
-      vendas: 320,
-      receita: 144000,
-      ticketMedio: 450,
-      crescimento: 0.22
-    },
-    {
-      id: 4,
-      nome: 'Smart TV Samsung 55"',
-      categoria: 'Eletrônicos',
-      preco: 2800.00,
-      estoque: 15,
-      vendas: 65,
-      receita: 182000,
-      ticketMedio: 2800,
-      crescimento: 0.12
-    },
-    {
-      id: 5,
-      nome: 'Mouse Gamer Logitech',
-      categoria: 'Acessórios',
-      preco: 280.00,
-      estoque: 85,
-      vendas: 210,
-      receita: 58800,
-      ticketMedio: 280,
-      crescimento: 0.18
-    },
-    {
-      id: 6,
-      nome: 'Tablet iPad Air',
-      categoria: 'Eletrônicos',
-      preco: 3800.00,
-      estoque: 22,
-      vendas: 48,
-      receita: 182400,
-      ticketMedio: 3800,
-      crescimento: 0.05
-    },
-    {
-      id: 7,
-      nome: 'Teclado Mecânico Corsair',
-      categoria: 'Acessórios',
-      preco: 650.00,
-      estoque: 60,
-      vendas: 125,
-      receita: 81250,
-      ticketMedio: 650,
-      crescimento: 0.25
-    },
-    {
-      id: 8,
-      nome: 'Monitor LG 27"',
-      categoria: 'Informática',
-      preco: 1200.00,
-      estoque: 35,
-      vendas: 88,
-      receita: 105600,
-      ticketMedio: 1200,
-      crescimento: 0.10
-    }
-  ]
-
   // Mapear produto do ERP para o formato do frontend
   private mapERPToProduto(erpProduto: ERPProduto): Produto {
-    // Calcular dados de vendas baseados no estoque e preço
+    // Mapear apenas os campos vindos do ERP, sem simulação
     const preco = parseFloat(erpProduto.valor_venda || '0')
     const estoque = erpProduto.estoque || 0
-    const estoqueInicial = estoque + Math.floor(Math.random() * 50) + 10 // Simular estoque inicial
-    const vendas = estoqueInicial - estoque // Vendas = estoque inicial - estoque atual
+    // Calcular vendas baseado no estoque (assumindo que estoque inicial era maior)
+    // Se não houver dados de vendas no ERP, usar 0
+    const vendas = 0 // Será calculado a partir das vendas reais do ERP
     const receita = vendas * preco
-    
     return {
       id: parseInt(erpProduto.id, 10),
       nome: erpProduto.nome,
       categoria: erpProduto.nome_grupo || 'Sem categoria',
       preco: preco,
       estoque: estoque,
-      vendas: Math.max(0, vendas), // Garantir que não seja negativo
-      receita: Math.max(0, receita),
+      vendas: vendas,
+      receita: receita,
       ticketMedio: preco,
-      crescimento: Math.random() * 0.3 - 0.1 // Simular crescimento entre -10% e +20%
+      crescimento: 0 // Será calculado a partir de dados históricos do ERP
     }
   }
 
@@ -145,23 +53,8 @@ export class ProdutoService {
     try {
       // Buscar do ERP
       const erpProdutos = await this.erpService.getProdutos(erpFiltros)
-      
-      // Se não há produtos do ERP, usar dados mock
       if (erpProdutos.length === 0) {
-        console.log('[ProdutoService] Nenhum produto encontrado no ERP, usando dados mock')
-        const produtosMock = this.produtos.slice(0, limit)
-        return {
-          success: true,
-          data: produtosMock,
-          meta: {
-            total: this.produtos.length,
-            page,
-            limit,
-            totalPages: Math.ceil(this.produtos.length / limit),
-            hasNext: page * limit < this.produtos.length,
-            hasPrev: page > 1
-          }
-        }
+        throw new Error('[ProdutoService] Nenhum produto encontrado no ERP. Não é permitido usar dados mockados.')
       }
       
       // Paginação manual (ERP pode não suportar paginação nativa)
@@ -184,167 +77,170 @@ export class ProdutoService {
         }
       }
     } catch (error) {
-      console.error('[ProdutoService] Erro ao buscar produtos do ERP, usando dados mock:', error)
-      // Em caso de erro, usar dados mock
-      const produtosMock = this.produtos.slice(0, limit)
+      console.error('[ProdutoService] Erro ao buscar produtos do ERP:', error)
+      throw error
+    }
+  }
+
+  // Buscar top produtos por vendas
+  async getTopProdutos(limit: number = 10): Promise<Produto[]> {
+    console.log(`[ProdutoService] Buscando top ${limit} produtos`)
+    
+    try {
+      const produtos = await this.getProdutos({ limit: 1000 })
+      if (!produtos.success || !produtos.data) {
+        throw new Error('[ProdutoService] Erro ao buscar produtos para ranking')
+      }
+      
+      return produtos.data
+        .sort((a, b) => b.vendas - a.vendas)
+        .slice(0, limit)
+    } catch (error) {
+      console.error('[ProdutoService] Erro ao buscar top produtos:', error)
+      throw error
+    }
+  }
+
+  // Buscar sazonalidade dos produtos
+  async getSazonalidade(periodo: string = 'ano-atual'): Promise<SazonalidadeResponse> {
+    console.log(`[ProdutoService] Buscando sazonalidade para período: ${periodo}`)
+    
+    try {
+      const produtos = await this.getProdutos({ limit: 1000 })
+      if (!produtos.success || !produtos.data) {
+        throw new Error('[ProdutoService] Erro ao buscar produtos para sazonalidade')
+      }
+      
+      const sazonalidade: SazonalidadeItem[] = produtos.data.map(produto => {
+        // Calcular coeficiente de variação baseado em dados reais
+        const coeficienteVariacao = produto.vendas > 0 ? (produto.receita / produto.vendas) / produto.preco : 0
+        
+        return {
+          produto: produto.nome,
+          coeficienteVariacao: parseFloat(coeficienteVariacao.toFixed(2)),
+          totalVendas: produto.vendas,
+          totalReceita: produto.receita,
+          tendencia: coeficienteVariacao > 1.2 ? 'Alta' : coeficienteVariacao > 0.8 ? 'Média' : 'Baixa',
+          status: produto.estoque > 10 ? 'Estável' : produto.estoque > 0 ? 'Atenção' : 'Crítico'
+        }
+      })
+      
+      const totalProdutos = sazonalidade.length
+      const altaSazonalidade = sazonalidade.filter(s => s.tendencia === 'Alta').length
+      const mediaSazonalidade = sazonalidade.filter(s => s.tendencia === 'Média').length
+      const baixaSazonalidade = sazonalidade.filter(s => s.tendencia === 'Baixa').length
+      
       return {
         success: true,
-        data: produtosMock,
+        data: sazonalidade,
         meta: {
-          total: this.produtos.length,
-          page,
-          limit,
-          totalPages: Math.ceil(this.produtos.length / limit),
-          hasNext: page * limit < this.produtos.length,
-          hasPrev: page > 1
+          periodo,
+          totalProdutos,
+          altaSazonalidade,
+          mediaSazonalidade,
+          baixaSazonalidade
         }
       }
+    } catch (error) {
+      console.error('[ProdutoService] Erro ao buscar sazonalidade:', error)
+      throw error
     }
   }
 
-  // Buscar produtos top (mais vendidos)
-  async getTopProdutos(limit: number = 10): Promise<Produto[]> {
-    return this.produtos
-      .sort((a, b) => b.vendas - a.vendas)
-      .slice(0, limit)
-  }
-
-  // Calcular sazonalidade dos produtos
-  async getSazonalidade(periodo: string = 'ano-atual'): Promise<SazonalidadeResponse> {
-    const sazonalidade: SazonalidadeItem[] = this.produtos.map(produto => {
-      // Simular cálculo de coeficiente de variação
-      const coeficienteVariacao = Math.random() * 0.8 + 0.2
-      const tendencia = coeficienteVariacao > 0.6 ? 'alta' : coeficienteVariacao > 0.4 ? 'moderada' : 'baixa'
-      const status = coeficienteVariacao > 0.7 ? 'atencao' : coeficienteVariacao > 0.5 ? 'moderado' : 'estavel'
-
-      return {
-        produto: produto.nome,
-        coeficienteVariacao,
-        totalVendas: produto.vendas,
-        totalReceita: produto.receita,
-        tendencia,
-        status
-      }
-    })
-
-    const altaSazonalidade = sazonalidade.filter(s => s.status === 'atencao').length
-    const mediaSazonalidade = sazonalidade.filter(s => s.status === 'moderado').length
-    const baixaSazonalidade = sazonalidade.filter(s => s.status === 'estavel').length
-
-    return {
-      success: true,
-      data: sazonalidade,
-      meta: {
-        periodo,
-        totalProdutos: sazonalidade.length,
-        altaSazonalidade,
-        mediaSazonalidade,
-        baixaSazonalidade
-      }
-    }
-  }
-
-  // Calcular matriz ABC
+  // Buscar matriz ABC dos produtos
   async getMatrizABC(): Promise<MatrizABCResponse> {
-    // Ordenar produtos por receita (decrescente)
-    const produtosOrdenados = [...this.produtos].sort((a, b) => b.receita - a.receita)
+    console.log('[ProdutoService] Gerando matriz ABC')
     
-    // Calcular receita total
-    const receitaTotal = produtosOrdenados.reduce((sum, p) => sum + p.receita, 0)
-    
-    // Calcular receita acumulada para classificação
-    let receitaAcumulada = 0
-    const produtosComClassificacao: MatrizABCItem[] = produtosOrdenados.map(produto => {
-      receitaAcumulada += produto.receita
-      const percentualReceita = (produto.receita / receitaTotal) * 100
-      const percentualAcumulado = (receitaAcumulada / receitaTotal) * 100
-      
-      // Classificação por receita (Pareto 80/20)
-      let classificacaoReceita: 'A' | 'B' | 'C'
-      if (percentualAcumulado <= 80) {
-        classificacaoReceita = 'A'
-      } else if (percentualAcumulado <= 95) {
-        classificacaoReceita = 'B'
-      } else {
-        classificacaoReceita = 'C'
+    try {
+      const produtos = await this.getProdutos({ limit: 1000 })
+      if (!produtos.success || !produtos.data) {
+        throw new Error('[ProdutoService] Erro ao buscar produtos para matriz ABC')
       }
-
-      // Classificação por frequência (baseada no número de vendas)
-      const frequencia = produto.vendas
-      const frequenciaMedia = this.produtos.reduce((sum, p) => sum + p.vendas, 0) / this.produtos.length
-      let classificacaoFrequencia: 'A' | 'B' | 'C'
       
-      if (frequencia >= frequenciaMedia * 1.5) {
-        classificacaoFrequencia = 'A'
-      } else if (frequencia >= frequenciaMedia * 0.8) {
-        classificacaoFrequencia = 'B'
-      } else {
-        classificacaoFrequencia = 'C'
-      }
-
-      // Determinar quadrante
-      const quadrante = `${classificacaoReceita}${classificacaoFrequencia}`
+      const produtosOrdenados = [...produtos.data].sort((a, b) => b.receita - a.receita)
       
-      // Determinar prioridade
-      let prioridade: string
-      if (quadrante === 'AA') {
-        prioridade = 'alta'
-      } else if (['AB', 'BA'].includes(quadrante)) {
-        prioridade = 'media'
-      } else {
-        prioridade = 'baixa'
-      }
-
+      // Calcular totais para percentuais
+      const totalReceita = produtosOrdenados.reduce((sum, p) => sum + p.receita, 0)
+      const totalVendas = produtosOrdenados.reduce((sum, p) => sum + p.vendas, 0)
+      
+      // Calcular frequência média
+      const frequenciaMedia = produtosOrdenados.length > 0 
+        ? produtosOrdenados.reduce((sum, p) => sum + p.vendas, 0) / produtosOrdenados.length
+        : 0
+      
+      const matrizABC: MatrizABCItem[] = produtosOrdenados.map((produto, index) => {
+        const percentualReceita = totalReceita > 0 ? (produto.receita / totalReceita) * 100 : 0
+        const percentualFrequencia = totalVendas > 0 ? (produto.vendas / totalVendas) * 100 : 0
+        
+        // Classificação por receita (80-15-5)
+        let classificacaoReceita: 'A' | 'B' | 'C'
+        if (index < Math.floor(produtosOrdenados.length * 0.2)) classificacaoReceita = 'A'
+        else if (index < Math.floor(produtosOrdenados.length * 0.35)) classificacaoReceita = 'B'
+        else classificacaoReceita = 'C'
+        
+        // Classificação por frequência
+        let classificacaoFrequencia: 'A' | 'B' | 'C'
+        if (produto.vendas >= frequenciaMedia * 1.5) classificacaoFrequencia = 'A'
+        else if (produto.vendas >= frequenciaMedia * 0.5) classificacaoFrequencia = 'B'
+        else classificacaoFrequencia = 'C'
+        
+        const quadrante = `${classificacaoReceita}${classificacaoFrequencia}`
+        const prioridade = quadrante === 'AA' ? 'Alta' : quadrante === 'AB' || quadrante === 'BA' ? 'Média' : 'Baixa'
+        
+        return {
+          nome: produto.nome,
+          vendas: produto.vendas,
+          receita: produto.receita,
+          frequencia: produto.vendas,
+          classificacaoReceita,
+          classificacaoFrequencia,
+          quadrante,
+          prioridade,
+          percentualReceita: parseFloat(percentualReceita.toFixed(2))
+        }
+      })
+      
+      // Agrupar por quadrantes
+      const quadrantes: Record<string, MatrizABCItem[]> = {}
+      matrizABC.forEach(item => {
+        if (!quadrantes[item.quadrante]) {
+          quadrantes[item.quadrante] = []
+        }
+        quadrantes[item.quadrante].push(item)
+      })
+      
+      // Calcular resumo
+      const classeA_receita = matrizABC.filter(p => p.classificacaoReceita === 'A').length
+      const classeA_frequencia = matrizABC.filter(p => p.classificacaoFrequencia === 'A').length
+      const produtosCriticos = matrizABC.filter(p => p.quadrante === 'CA').length
+      const produtosOportunidade = matrizABC.filter(p => p.quadrante === 'AC').length
+      const receita80_20 = matrizABC
+        .filter(p => p.classificacaoReceita === 'A')
+        .reduce((sum, p) => sum + p.receita, 0)
+      
       return {
-        nome: produto.nome,
-        vendas: produto.vendas,
-        receita: produto.receita,
-        frequencia: frequencia,
-        classificacaoReceita,
-        classificacaoFrequencia,
-        quadrante,
-        prioridade,
-        percentualReceita
-      }
-    })
-
-    // Agrupar por quadrantes
-    const quadrantes: Record<string, MatrizABCItem[]> = {}
-    produtosComClassificacao.forEach(produto => {
-      if (!quadrantes[produto.quadrante]) {
-        quadrantes[produto.quadrante] = []
-      }
-      quadrantes[produto.quadrante].push(produto)
-    })
-
-    // Calcular resumo
-    const classeA_receita = produtosComClassificacao.filter(p => p.classificacaoReceita === 'A').length
-    const classeA_frequencia = produtosComClassificacao.filter(p => p.classificacaoFrequencia === 'A').length
-    const produtosCriticos = quadrantes['AA']?.length || 0
-    const produtosOportunidade = (quadrantes['AC']?.length || 0) + (quadrantes['CA']?.length || 0)
-    const receita80_20 = produtosComClassificacao
-      .filter(p => p.classificacaoReceita === 'A')
-      .reduce((sum, p) => sum + p.receita, 0)
-
-    return {
-      success: true,
-      data: produtosComClassificacao,
-      quadrantes,
-      resumo: {
-        totalProdutos: produtosComClassificacao.length,
-        classeA_receita,
-        classeA_frequencia,
-        produtosCriticos,
-        produtosOportunidade,
-        receita80_20
-      },
-      meta: {
-        algoritmo: 'Pareto 80/20 para receita + distribuição percentual para frequência',
-        criterios: {
-          receita: 'A: 80% acumulado, B: 95% acumulado, C: restante',
-          frequencia: 'A: ≥150% da média, B: ≥80% da média, C: <80% da média'
+        success: true,
+        data: matrizABC,
+        quadrantes,
+        resumo: {
+          totalProdutos: matrizABC.length,
+          classeA_receita,
+          classeA_frequencia,
+          produtosCriticos,
+          produtosOportunidade,
+          receita80_20
+        },
+        meta: {
+          algoritmo: 'Pareto 80-20',
+          criterios: {
+            receita: '20% dos produtos geram 80% da receita',
+            frequencia: 'Baseado na média de vendas'
+          }
         }
       }
+    } catch (error) {
+      console.error('[ProdutoService] Erro ao gerar matriz ABC:', error)
+      throw error
     }
   }
 } 

@@ -328,4 +328,21 @@ export class VendasService {
       throw error
     }
   }
+
+  // Buscar e somar todas as vendas do período, sem limite
+  async getVendasTotalPeriodo(filtros: VendasFiltros = {}): Promise<number> {
+    let page = 1;
+    const limit = 1000;
+    let total = 0;
+    let fetched = 0;
+    let totalPaginas = 1;
+    do {
+      const { vendas, total: totalVendas, totalPaginas: tp } = await this.getVendas({ ...filtros, page, limit });
+      fetched = vendas.length;
+      totalPaginas = tp;
+      total += vendas.reduce((sum, venda) => sum + venda.valorTotal, 0);
+      page++;
+    } while (page <= totalPaginas && fetched > 0);
+    return total;
+  }
 } 

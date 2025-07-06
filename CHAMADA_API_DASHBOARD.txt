@@ -1,0 +1,258 @@
+CHAMADA DA API DO DASHBOARD - APLICAÇÃO DE FILTROS
+==================================================
+
+ARQUIVO: frontend/src/pages/Dashboard.tsx
+LINHAS: 47-67
+
+FUNÇÃO: fetchDashboardData()
+DESCRIÇÃO: Função principal que busca dados do dashboard aplicando filtros temporais
+
+===============================================================================
+
+CÓDIGO COMPLETO DA FUNÇÃO:
+
+```typescript
+// Função para buscar dados do dashboard com filtro de datas
+async function fetchDashboardData(dateRangeParam?: { from: Date | undefined; to: Date | undefined }) {
+  // Se não foi passado um range específico, usar o range atual
+  const rangeToUse = dateRangeParam || dateRange
+  
+  setLoading(true)
+  try {
+    const service = new DashboardService()
+    let params = ''
+    
+    // 🔗 AQUI É ONDE OS FILTROS SÃO APLICADOS
+    if (rangeToUse.from && rangeToUse.to) {
+      params = `?dataInicio=${format(rangeToUse.from, 'yyyy-MM-dd')}&dataFim=${format(rangeToUse.to, 'yyyy-MM-dd')}`
+      console.log(`[Dashboard] Buscando dados do período: ${format(rangeToUse.from, 'dd/MM/yyyy')} até ${format(rangeToUse.to, 'dd/MM/yyyy')}`)
+    }
+    
+    // 🔗 CHAMADA DA API COM FILTROS
+    const response = await service.getDashboardAnalytics(params)
+    setDashboardData(response.data)
+    setError(null)
+  } catch (err) {
+    console.error('Erro ao carregar dados do dashboard:', err)
+    setError('Erro ao carregar dados do dashboard')
+    setDashboardData(null)
+  } finally {
+    setLoading(false)
+  }
+}
+```
+
+===============================================================================
+
+FUNÇÃO getDateRangeFromPeriod() - CONVERSÃO DE PERÍODOS
+=======================================================
+
+ARQUIVO: frontend/src/pages/Dashboard.tsx
+LINHAS: 85-167
+
+```typescript
+// Função para converter período em intervalo de datas
+const getDateRangeFromPeriod = (period: string) => {
+  const now = new Date()
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  
+  switch (period) {
+    case 'esta-semana':
+      // Esta semana: domingo (0) até hoje
+      const startOfWeek = new Date(today)
+      startOfWeek.setDate(today.getDate() - today.getDay())
+      return { from: startOfWeek, to: today }
+      
+    case 'semana-passada':
+      // Semana passada: domingo a sábado da semana anterior
+      const lastWeekStart = new Date(today)
+      lastWeekStart.setDate(today.getDate() - today.getDay() - 7)
+      const lastWeekEnd = new Date(lastWeekStart)
+      lastWeekEnd.setDate(lastWeekStart.getDate() + 6)
+      return { from: lastWeekStart, to: lastWeekEnd }
+      
+    case 'ultimos-15-dias':
+      // Últimos 15 dias: há 15 dias até hoje
+      const fifteenDaysAgo = new Date(today)
+      fifteenDaysAgo.setDate(today.getDate() - 15)
+      return { from: fifteenDaysAgo, to: today }
+      
+    case 'mes-atual':
+      // Mês atual: primeiro dia do mês até hoje
+      const firstDay = new Date(now.getFullYear(), now.getMonth(), 1)
+      return { from: firstDay, to: today }
+      
+    case 'mes-passado':
+      // Mês passado: primeiro ao último dia do mês anterior
+      const lastMonthFirst = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+      const lastMonthLast = new Date(now.getFullYear(), now.getMonth(), 0)
+      return { from: lastMonthFirst, to: lastMonthLast }
+      
+    case 'ultimo-trimestre':
+      // Último trimestre: 3 meses atrás até hoje
+      const threeMonthsAgo = new Date(today)
+      threeMonthsAgo.setMonth(today.getMonth() - 3)
+      return { from: threeMonthsAgo, to: today }
+      
+    case '180-dias':
+      // 180 dias: há 180 dias até hoje
+      const sixMonthsAgo = new Date(today)
+      sixMonthsAgo.setDate(today.getDate() - 180)
+      return { from: sixMonthsAgo, to: today }
+      
+    case 'este-ano':
+      // Este ano: primeiro dia do ano até hoje
+      const yearStart = new Date(now.getFullYear(), 0, 1)
+      return { from: yearStart, to: today }
+      
+    case 'ano-passado':
+      // Ano passado: primeiro ao último dia do ano anterior
+      const lastYearStart = new Date(now.getFullYear() - 1, 0, 1)
+      const lastYearEnd = new Date(now.getFullYear() - 1, 11, 31)
+      return { from: lastYearStart, to: lastYearEnd }
+      
+    default:
+      if (period.startsWith('custom:')) {
+        const [, fromStr, toStr] = period.split(':')
+        return { from: new Date(fromStr), to: new Date(toStr) }
+      }
+      return null
+  }
+}
+```
+
+===============================================================================
+
+HANDLERS DE MUDANÇA DE FILTROS
+===============================
+
+1. HANDLER DE MUDANÇA DE PERÍODO:
+```typescript
+// Handler para mudança de período do TemporalFilter
+const handlePeriodChange = (period: string) => {
+  console.log('Período selecionado:', period)
+  const dateRange = getDateRangeFromPeriod(period)
+  if (dateRange) {
+    setDateRange(dateRange)
+    fetchDashboardData(dateRange)  // 🔗 AQUI OS FILTROS SÃO APLICADOS
+  }
+}
+```
+
+2. HANDLER DE MUDANÇA DE DATA RANGE:
+```typescript
+// Handler para mudança de data
+const handleDateRangeChange = (range: { from: Date | undefined; to: Date | undefined }) => {
+  setDateRange(range)
+  if (range.from && range.to) {
+    fetchDashboardData(range)  // 🔗 AQUI OS FILTROS SÃO APLICADOS
+  }
+}
+```
+
+3. INICIALIZAÇÃO COM FILTRO PADRÃO:
+```typescript
+useEffect(() => {
+  // Inicializar com o período "mes-atual"
+  const initialRange = getDateRangeFromPeriod('mes-atual')
+  if (initialRange) {
+    setDateRange(initialRange)
+    fetchDashboardData(initialRange)  // 🔗 AQUI OS FILTROS SÃO APLICADOS
+  }
+}, [])
+```
+
+===============================================================================
+
+EXEMPLOS DE URLS GERADAS
+========================
+
+1. FILTRO "MÊS ATUAL":
+   Período selecionado: 'mes-atual'
+   getDateRangeFromPeriod retorna: { from: 2024-01-01, to: 2024-01-15 }
+   URL gerada: GET /api/dashboard/analytics?dataInicio=2024-01-01&dataFim=2024-01-15
+
+2. FILTRO "ÚLTIMOS 15 DIAS":
+   Período selecionado: 'ultimos-15-dias'
+   getDateRangeFromPeriod retorna: { from: 2024-01-01, to: 2024-01-15 }
+   URL gerada: GET /api/dashboard/analytics?dataInicio=2024-01-01&dataFim=2024-01-15
+
+3. FILTRO PERSONALIZADO:
+   Período selecionado: 'custom:2024-01-01T00:00:00.000Z:2024-01-31T00:00:00.000Z'
+   getDateRangeFromPeriod retorna: { from: 2024-01-01, to: 2024-01-31 }
+   URL gerada: GET /api/dashboard/analytics?dataInicio=2024-01-01&dataFim=2024-01-31
+
+===============================================================================
+
+FLUXO COMPLETO DE APLICAÇÃO DOS FILTROS
+=======================================
+
+1. USUÁRIO SELECIONA FILTRO:
+   - Clica em um período no TemporalFilter
+   - Ou seleciona datas personalizadas
+
+2. CONVERSÃO DE PERÍODO:
+   - handlePeriodChange() é chamado
+   - getDateRangeFromPeriod() converte período em { from: Date, to: Date }
+
+3. APLICAÇÃO DOS FILTROS:
+   - fetchDashboardData() é chamado com o range de datas
+   - Formata datas como 'yyyy-MM-dd' usando format() da date-fns
+   - Constrói query string: ?dataInicio=2024-01-01&dataFim=2024-01-15
+
+4. CHAMADA DA API:
+   - service.getDashboardAnalytics(params) é executado
+   - URL completa: GET /api/dashboard/analytics?dataInicio=2024-01-01&dataFim=2024-01-15
+
+5. PROCESSAMENTO BACKEND:
+   - Rota /api/dashboard/analytics recebe parâmetros
+   - DashboardService.getDashboardAnalytics() processa datas
+   - Calcula período de comparação automaticamente
+   - Busca dados filtrados dos serviços
+
+6. RETORNO E EXIBIÇÃO:
+   - Backend retorna analytics calculados
+   - Frontend atualiza estado dashboardData
+   - Componentes re-renderizam com novos dados
+
+===============================================================================
+
+PONTOS CHAVE
+============
+
+1. getDateRangeFromPeriod() - Converte períodos em objetos { from: Date, to: Date }
+2. fetchDashboardData() - Aplica os filtros na chamada da API
+3. Formatação de datas - Usa format(date, 'yyyy-MM-dd') para API
+4. Logs de debug - Mostra período sendo buscado
+5. Tratamento de erros - Try/catch com feedback ao usuário
+
+===============================================================================
+
+IMPORTS NECESSÁRIOS
+===================
+
+```typescript
+import { format } from 'date-fns'
+import { DashboardService } from '@/lib/api'
+```
+
+===============================================================================
+
+ESTADOS UTILIZADOS
+==================
+
+```typescript
+const [loading, setLoading] = useState(true)
+const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
+const [error, setError] = useState<string | null>(null)
+const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({ from: undefined, to: undefined })
+```
+
+===============================================================================
+
+FIM DA DOCUMENTAÇÃO
+===================
+
+Última atualização: Janeiro 2024
+Versão: 1.0.0
+Arquivo: CHAMADA_API_DASHBOARD.txt 

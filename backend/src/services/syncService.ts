@@ -4,6 +4,7 @@ import cacheService from './cacheService'
 import Venda from '../models/Venda'
 import Cliente from '../models/Cliente'
 import Produto from '../models/Produto'
+import { ERPVendaFiltros, ERPClienteFiltros, ERPProdutoFiltros } from '../types/erp'
 import dotenv from 'dotenv'
 
 dotenv.config()
@@ -71,7 +72,7 @@ class SyncService {
       this.updateSyncLog(entity, 'in_progress')
       
       // Buscar vendas do ERP
-      const erpVendas = await this.erpService.getVendas({})
+      const erpVendas = await this.erpService.getTodasVendasPaginadas({})
       let updatedCount = 0
       
       for (const erpVenda of erpVendas) {
@@ -304,6 +305,127 @@ class SyncService {
   stopAutoSync() {
     console.log('[SyncService] Parando sincronização automática')
     cron.getTasks().forEach((task: any) => task.stop())
+  }
+
+  // Sincronização incremental de vendas (quando o ERP suportar filtros de modificação)
+  async syncVendasIncremental(ultimaSincronizacao: Date): Promise<void> {
+    console.log('[SyncService] Iniciando sincronização incremental de vendas')
+    
+    try {
+      // Formatar data para o formato esperado pelo ERP
+      const dataModificacaoInicio = ultimaSincronizacao.toISOString().slice(0, 19).replace('T', ' ')
+      
+      const filtros: ERPVendaFiltros = {
+        data_modificacao_inicio: dataModificacaoInicio
+      }
+      
+      console.log(`[SyncService] Buscando vendas modificadas após: ${dataModificacaoInicio}`)
+      
+      const vendas = await this.erpService.getTodasVendasPaginadas(filtros)
+      
+      if (vendas.length === 0) {
+        console.log('[SyncService] ✅ Nenhuma venda modificada encontrada')
+        return
+      }
+      
+      console.log(`[SyncService] 📊 Encontradas ${vendas.length} vendas modificadas`)
+      
+      // Usar o método existente de sincronização de vendas
+      await this.syncVendas()
+      
+      console.log('[SyncService] ✅ Sincronização incremental de vendas concluída')
+      
+    } catch (error) {
+      console.error('[SyncService] ❌ Erro na sincronização incremental de vendas:', error)
+      throw error
+    }
+  }
+
+  // Sincronização incremental de clientes (quando o ERP suportar filtros de modificação)
+  async syncClientesIncremental(ultimaSincronizacao: Date): Promise<void> {
+    console.log('[SyncService] Iniciando sincronização incremental de clientes')
+    
+    try {
+      // Formatar data para o formato esperado pelo ERP
+      const dataModificacaoInicio = ultimaSincronizacao.toISOString().slice(0, 19).replace('T', ' ')
+      
+      const filtros: ERPClienteFiltros = {
+        data_modificacao_inicio: dataModificacaoInicio
+      }
+      
+      console.log(`[SyncService] Buscando clientes modificados após: ${dataModificacaoInicio}`)
+      
+      const clientes = await this.erpService.getClientes(filtros)
+      
+      if (clientes.length === 0) {
+        console.log('[SyncService] ✅ Nenhum cliente modificado encontrado')
+        return
+      }
+      
+      console.log(`[SyncService] 📊 Encontrados ${clientes.length} clientes modificados`)
+      
+      // Usar o método existente de sincronização de clientes
+      await this.syncClientes()
+      
+      console.log('[SyncService] ✅ Sincronização incremental de clientes concluída')
+      
+    } catch (error) {
+      console.error('[SyncService] ❌ Erro na sincronização incremental de clientes:', error)
+      throw error
+    }
+  }
+
+  // Sincronização incremental de produtos (quando o ERP suportar filtros de modificação)
+  async syncProdutosIncremental(ultimaSincronizacao: Date): Promise<void> {
+    console.log('[SyncService] Iniciando sincronização incremental de produtos')
+    
+    try {
+      // Formatar data para o formato esperado pelo ERP
+      const dataModificacaoInicio = ultimaSincronizacao.toISOString().slice(0, 19).replace('T', ' ')
+      
+      const filtros: ERPProdutoFiltros = {
+        data_modificacao_inicio: dataModificacaoInicio
+      }
+      
+      console.log(`[SyncService] Buscando produtos modificados após: ${dataModificacaoInicio}`)
+      
+      const produtos = await this.erpService.getProdutos(filtros)
+      
+      if (produtos.length === 0) {
+        console.log('[SyncService] ✅ Nenhum produto modificado encontrado')
+        return
+      }
+      
+      console.log(`[SyncService] 📊 Encontrados ${produtos.length} produtos modificados`)
+      
+      // Usar o método existente de sincronização de produtos
+      await this.syncProdutos()
+      
+      console.log('[SyncService] ✅ Sincronização incremental de produtos concluída')
+      
+    } catch (error) {
+      console.error('[SyncService] ❌ Erro na sincronização incremental de produtos:', error)
+      throw error
+    }
+  }
+
+  // Sincronização incremental completa (quando o ERP suportar filtros de modificação)
+  async syncIncremental(ultimaSincronizacao: Date): Promise<void> {
+    console.log('[SyncService] Iniciando sincronização incremental completa')
+    
+    try {
+      await Promise.all([
+        this.syncVendasIncremental(ultimaSincronizacao),
+        this.syncClientesIncremental(ultimaSincronizacao),
+        this.syncProdutosIncremental(ultimaSincronizacao)
+      ])
+      
+      console.log('[SyncService] ✅ Sincronização incremental completa finalizada')
+      
+    } catch (error) {
+      console.error('[SyncService] ❌ Erro na sincronização incremental:', error)
+      throw error
+    }
   }
 }
 
