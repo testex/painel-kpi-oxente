@@ -5,6 +5,11 @@ import { ProdutoService } from './produtoService'
 import { VendasService } from './vendasService'
 import { ClientesService } from './clientesService'
 import { ERPIntegrationService } from './erpIntegrationService'
+import cacheService from './cacheService'
+import Venda from '../models/Venda'
+import Cliente from '../models/Cliente'
+import Produto from '../models/Produto'
+import { Op } from 'sequelize'
 
 export class DashboardService {
   private produtoService: ProdutoService

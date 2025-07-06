@@ -28,6 +28,14 @@ export interface Cliente {
   frequenciaCompras?: number
   recencia?: number // dias desde última compra
   valorMedio?: number
+  dataCadastro: string
+  valorTotal: number
+  rfm: {
+    recencia: number
+    frequencia: number
+    valor: number
+    segmento: string
+  }
 }
 
 export interface ClienteEndereco {
@@ -120,6 +128,20 @@ export class ClientesService {
   private mapERPToCliente(erpCliente: ERPCliente): Cliente {
     console.log(`[ClientesService] Mapeando cliente ERP ID: ${erpCliente.id}`)
     
+    // Calcular campos que o frontend espera
+    const dataCadastro = erpCliente.data_nascimento || new Date().toISOString().split('T')[0]
+    const ultimaCompra = new Date().toISOString().split('T')[0] // TODO: Calcular da tabela de vendas
+    const totalCompras = 0 // TODO: Calcular da tabela de vendas
+    const valorTotal = 0 // TODO: Calcular da tabela de vendas
+    
+    // Calcular RFM básico (placeholder)
+    const rfm = {
+      recencia: 30, // TODO: Calcular dias desde última compra
+      frequencia: totalCompras,
+      valor: valorTotal,
+      segmento: this.calcularSegmentoRFM(30, totalCompras, valorTotal)
+    }
+    
     return {
       id: erpCliente.id,
       nome: erpCliente.nome,
@@ -133,6 +155,13 @@ export class ClientesService {
       email: erpCliente.email,
       ativo: erpCliente.ativo === '1',
       dataNascimento: erpCliente.data_nascimento || undefined,
+      // Campos que o frontend espera
+      dataCadastro,
+      ultimaCompra,
+      totalCompras,
+      valorTotal,
+      rfm,
+      // Campos originais
       enderecos: (erpCliente.enderecos || []).map(endereco => ({
         cep: endereco.endereco.cep,
         logradouro: endereco.endereco.logradouro,
@@ -150,6 +179,16 @@ export class ClientesService {
         observacao: contato.contato.observacao
       }))
     }
+  }
+
+  // Calcular segmento RFM básico
+  private calcularSegmentoRFM(recencia: number, frequencia: number, valor: number): string {
+    if (recencia <= 30 && frequencia >= 10 && valor >= 1000) return 'Champions'
+    if (recencia <= 60 && frequencia >= 5 && valor >= 500) return 'Loyal Customers'
+    if (recencia <= 90 && frequencia >= 3 && valor >= 200) return 'Potential Loyalists'
+    if (recencia > 90 && frequencia >= 5 && valor >= 500) return 'At Risk'
+    if (recencia <= 30 && frequencia <= 2) return 'New Customers'
+    return 'At Risk'
   }
 
   // Buscar clientes do ERP

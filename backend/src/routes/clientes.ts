@@ -4,6 +4,7 @@
 
 import { Router, Request, Response } from 'express'
 import { ClientesService, ClientesFiltros } from '../services/clientesService'
+import { ERPIntegrationService } from '../services/erpIntegrationService'
 
 const router = Router()
 const clientesService = new ClientesService()
@@ -226,6 +227,35 @@ router.get('/cidades/lista', async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('[ClientesRoutes] Erro ao listar cidades:', error)
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Erro interno do servidor'
+    })
+  }
+})
+
+// GET /api/clientes/test - Endpoint de teste para verificar dados do ERP
+router.get('/test', async (req: Request, res: Response) => {
+  console.log('[ClientesRoutes] GET /api/clientes/test - Testando dados do ERP')
+  
+  try {
+    // Buscar dados diretamente do ERP sem mapeamento
+    const erpService = new ERPIntegrationService()
+    const erpClientes = await erpService.getClientes({})
+    
+    console.log(`[ClientesRoutes] Dados brutos do ERP:`, erpClientes.length, 'clientes')
+    
+    res.json({
+      success: true,
+      data: {
+        total: erpClientes.length,
+        clientes: erpClientes.slice(0, 2), // Retorna apenas 2 para debug
+        message: 'Dados brutos do ERP'
+      }
+    })
+
+  } catch (error) {
+    console.error('[ClientesRoutes] Erro no teste:', error)
     res.status(500).json({
       success: false,
       error: error instanceof Error ? error.message : 'Erro interno do servidor'

@@ -15,6 +15,10 @@ import { erpRoutes } from './routes/erp';
 import vendasRoutes from './routes/vendas';
 import clientesRoutes from './routes/clientes';
 import dashboardRoutes from './routes/dashboard';
+import systemRoutes from './routes/system';
+import sequelize from './config/database';
+import cacheService from './services/cacheService';
+import syncService from './services/syncService';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -42,6 +46,7 @@ app.use('/api/erp', erpRoutes);
 app.use('/api/vendas', vendasRoutes);
 app.use('/api/clientes', clientesRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/system', systemRoutes);
 
 // Rota de teste para verificar se o servidor está funcionando
 app.get('/api/health', (req, res) => {
@@ -86,8 +91,29 @@ app.use('*', (req, res) => {
 });
 
 // Inicialização do servidor
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`[Server] Servidor rodando na porta ${PORT}`);
   console.log(`[Server] Ambiente: ${process.env.NODE_ENV || 'development'}`);
   console.log(`[Server] URL: http://localhost:${PORT}`);
+  
+  try {
+    // Conectar ao banco de dados
+    await sequelize.authenticate();
+    console.log('[Server] Conexão com PostgreSQL estabelecida com sucesso');
+    
+    // Sincronizar modelos (criar tabelas se não existirem)
+    await sequelize.sync({ alter: true });
+    console.log('[Server] Modelos sincronizados com o banco de dados');
+    
+    // Conectar ao Redis
+    await cacheService.connect();
+    console.log('[Server] Cache Redis inicializado');
+    
+    // Iniciar sincronização automática
+    syncService.startAutoSync();
+    console.log('[Server] Sincronização automática iniciada');
+    
+  } catch (error) {
+    console.error('[Server] Erro na inicialização:', error);
+  }
 }); 
