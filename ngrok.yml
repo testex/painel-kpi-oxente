@@ -1,8 +1,14 @@
-authtoken: ak_2zOEhlMyk3INqFGbhNOYoHsbZzo
+version: 3
+agent:
+  authtoken: 2zOE11THWp5jMVsmESZogLTgi5w_73LBjQmPGbH8PicwAa6uE
+
 tunnels:
-  painel-backend:
-    proto: http
-    addr: backend:3001
   painel-frontend:
     proto: http
     addr: frontend:80
+    domain: painelkpiv3.ngrok.app
+
+  painel-backend:
+    proto: http
+    addr: backend:3001
+    domain: painelkpiv3-api.ngrok.app

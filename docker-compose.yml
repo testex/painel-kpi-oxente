@@ -37,21 +37,11 @@ services:
   ngrok:
     image: ngrok/ngrok:latest
     container_name: painel-ngrok
-    command: http backend:3001
-    environment:
-      - NGROK_AUTHTOKEN=2zOE11THWp5jMVsmESZogLTgi5w_73LBjQmPGbH8PicwAa6uE
+    command: start --all --config /ngrok.yml
+    volumes:
+      - ./ngrok.yml:/ngrok.yml
     depends_on:
       - backend
-    networks:
-      - painel-kpi-network
-
-  ngrok-frontend:
-    image: ngrok/ngrok:latest
-    container_name: painel-ngrok-frontend
-    command: http frontend:80
-    environment:
-      - NGROK_AUTHTOKEN=2zOE11THWp5jMVsmESZogLTgi5w_73LBjQmPGbH8PicwAa6uE
-    depends_on:
       - frontend
     networks:
       - painel-kpi-network
