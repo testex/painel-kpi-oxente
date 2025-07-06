@@ -1,53 +1,64 @@
-version: '3.8'
 
 services:
-  # Backend API
   backend:
-    build: 
+    build:
       context: ./backend
-      dockerfile: Dockerfile
-    image: samuelbuarque/painel-kpi-backend:latest
-    container_name: painel-kpi-backend
+    container_name: painel-backend
     ports:
       - "3001:3001"
     environment:
       - NODE_ENV=production
-      - PORT=3001
-      - FRONTEND_URL=http://localhost
-    volumes:
-      - ./backend/.env:/app/.env:ro
+    restart: unless-stopped
     networks:
       - painel-kpi-network
-    restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3001/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
 
-  # Frontend React
   frontend:
-    build: 
-      context: ./frontend
-      dockerfile: Dockerfile
-    image: samuelbuarque/painel-kpi-frontend:latest
-    container_name: painel-kpi-frontend
+    build:
+      context: ./painel-kpi-oxente-frontend
+    container_name: painel-frontend
     ports:
-      - "80:80"
+      - "8080:80"
     depends_on:
       - backend
+    restart: unless-stopped
     networks:
       - painel-kpi-network
-    restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost"]
       interval: 30s
       timeout: 10s
       retries: 3
 
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: painel-ngrok
+    command: http backend:3001
+    environment:
+      - NGROK_AUTHTOKEN=2zOE11THWp5jMVsmESZogLTgi5w_73LBjQmPGbH8PicwAa6uE
+    depends_on:
+      - backend
+    networks:
+      - painel-kpi-network
+
+  ngrok-frontend:
+    image: ngrok/ngrok:latest
+    container_name: painel-ngrok-frontend
+    command: http frontend:80
+    environment:
+      - NGROK_AUTHTOKEN=2zOE11THWp5jMVsmESZogLTgi5w_73LBjQmPGbH8PicwAa6uE
+    depends_on:
+      - frontend
+    networks:
+      - painel-kpi-network
+
 networks:
   painel-kpi-network:
     driver: bridge
 
 volumes:
-  backend-data: 
+  backend-data:

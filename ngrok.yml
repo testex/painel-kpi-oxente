@@ -1,0 +1,8 @@
+authtoken: ak_2zOEhlMyk3INqFGbhNOYoHsbZzo
+tunnels:
+  painel-backend:
+    proto: http
+    addr: backend:3001
+  painel-frontend:
+    proto: http
+    addr: frontend:80
